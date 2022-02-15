@@ -84,20 +84,22 @@ def _deserialize_custom_object(obj: dict) -> object:
         obj = class_.from_json(obj_data)
     return obj
 
-class RequestStatus(Enum):
-     Failed = auto()
-     TokenInvalid = auto()
-     Successful = auto()
+class IEventData():
+    def __init__(self):
+        pass
+    @classmethod
+    def GetCustomJsonConverters():
+        return
+    @classmethod
+    def FromJson(json:str) -> IEventData:
+        jsonString = json.loads(json)
+        return IEventData(**jsonString)
 
+    @staticmethod
+    def CreateInstance(Type,json:str) -> IEventData:
+        data = IEventData(Type())
+        return data if not json else data.FromJson(json)
 
-class IEventRequest():
-    def __init__(self,
-                HttpRequestMessage: HttpRequest,
-                StatusMessage: str,
-                RequestStatus: RequestStatus):
-        self._HttpRequestMessage=HttpRequestMessage
-        self._StatusMessage=StatusMessage
-        self._RequestStatus=RequestStatus
 
 
 
