@@ -1,6 +1,10 @@
+
 from importlib import import_module
 import json
+import jsonschema
+from jsonschema import validate
 from azure.functions import HttpRequest
+from azure.functions import HttpResponse
 import typing
 from enum import Enum
 
@@ -84,25 +88,80 @@ def _deserialize_custom_object(obj: dict) -> object:
         obj = class_.from_json(obj_data)
     return obj
 
-class RequestStatus(Enum):
-     Failed = auto()
-     TokenInvalid = auto()
-     Successful = auto()
+
+class IEventData():
+    def __init__(self):
+        pass
+    @classmethod
+    def GetCustomJsonConverters():
+        return
+
+    @classmethod
+    def FromJson(json:str)->IEventData:
+        jsonString = json.loads(json)
+        return IEventData(**jsonString)
 
 
-class IEventRequest():
-    def __init__(self,
-                HttpRequestMessage: HttpRequest,
-                StatusMessage: str,
-                RequestStatus: RequestStatus):
-        self._HttpRequestMessage=HttpRequestMessage
-        self._StatusMessage=StatusMessage
-        self._RequestStatus=RequestStatus
+    @staticmethod
+    def CreateInstance(Type,json:str)->IEventData:
+        data = IEventData(Type())
+        return data if not json else data.FromJson(json)
+
+class IEventResponse():
+    def __init__(self, HttpResponseMessage: HttpResponse,
+                 Schema : str,
+                 Body: str,
+                 JsonBody):
+                 self.HttpResponseMessage=HttpResponseMessage
+                 self.Schema= Schema
+                 self.Body=Body
+                 self.JsonBody=JsonBody
+
+    
+    def get_Body(self):
+        return self.HttpResponseMessage.get_body        
+
+    def set_Body(self,value):
+        if self.HttpResponseMessage is None:
+            self.HttpResponseMessage = HttpResponse()
+            self.HttpResponseMessage.__set_body(value)
+
+    def invalidate():
+        pass
 
 
+    def get_JsonBody(self):
+        return json.dump(self.Body)
 
+    def set_JsonBody(self, value):
+        self.Body = str(value)
 
-
+    def set_JsonValue(self, paths, value):
+        payload = json.dumps(self.Body)
+        current = payload
+        last=""
+        for path in paths:
+            current=current[path]
+            last=path
+            if current is None:
+                pass #Throw exception
+        
+        current[path] = value
+        body = str(payload)
+    
+    def Validate(self):
+        try:
+            validate(instance=self.JsonBody, schema=self.Schema)
+        except jsonschema.exceptions.ValidationError as err:
+            raise Exception("Json is not valid")
+    
+    @staticmethod
+    def CreateInstance(type : type, schema : str, body : str):
+        response =IEventResponse(type())
+        response.Schema = schema
+        response.Body = body
+        return response
+        
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(meta.InConverter,
                                meta.OutConverter,
