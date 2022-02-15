@@ -87,26 +87,7 @@ def _deserialize_custom_object(obj: dict) -> object:
         # Initialize the object using its `from_json` deserializer
         obj = class_.from_json(obj_data)
     return obj
-
-
-class IEventData():
-    def __init__(self):
-        pass
-    @classmethod
-    def GetCustomJsonConverters():
-        return
-
-    @classmethod
-    def FromJson(json:str)->IEventData:
-        jsonString = json.loads(json)
-        return IEventData(**jsonString)
-
-
-    @staticmethod
-    def CreateInstance(Type,json:str)->IEventData:
-        data = IEventData(Type())
-        return data if not json else data.FromJson(json)
-
+    
 class IEventResponse():
     def __init__(self, HttpResponseMessage: HttpResponse,
                  Schema : str,
