@@ -341,6 +341,53 @@ class TokenIssuanceStartRequest(IEventRequest):
 
     def InstanceCreated(self,args: list):
         self.TokenClaims=args[0]
+
+
+class demo1():
+    class TokenIssuanceStartResponse(IEventResponse):
+        def __init__(self,
+                    Description: str):
+                    self.Description=Description
+        
+        def get_Description(self):
+            return self.Description
+        
+        def set_Description(self,value):
+            self.Description=value
+
+        def invalidate(self):
+            self.set_JsonValue(["addition","description"], self.Description)
+
+    class TokenIssuanceStartData(IEventData):
+        def __init__(self,
+                    EventId: uuid,
+                    EventTime: DateTime,
+                    EventVersion: str,
+                    EventType: str,
+                    Context: str):
+                    self.Context=Context
+                    self.EventType=EventType
+                    self.EventVersion=EventVersion
+                    self.EventTime=EventTime
+                    self.EventId=EventId
+
+
+
+    class TokenIssuanceStartRequest(IEventRequest):
+        def __init__(self,
+                    response: TokenIssuanceStartResponse,
+                    payload: TokenIssuanceStartData,
+                    TokenClaims: dict[str,str]):
+                    self.TokenClaims=TokenClaims
+                    self.response=response
+                    self.payload=payload
+
+        def InstanceCreated(self,args: list):
+            self.TokenClaims=args[0]
+
+    #def populte()
+
+    
         
                 
 
@@ -364,6 +411,7 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     def decode(cls,
                data: meta.Datum, *,
                trigger_metadata) -> typing.Any:
+        result=demo1.TokenIssuanceStartRequest()
         data_type = data.type
 
         # Durable functions extension always returns a string of json
