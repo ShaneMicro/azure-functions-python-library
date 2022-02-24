@@ -1,7 +1,10 @@
+from http import client
 from importlib import import_module
 import json
 from logging import exception
 import pickle
+from urllib import request
+
 
 
 from xmlrpc.client import DateTime
@@ -147,6 +150,9 @@ class IEventResponse():
         response.Body = body
         return response
 
+    def populate(result: dict):
+        return demo1.TokenIssuanceStartResponse(Description="test")
+
 class IEventData():
     def __init__(self):
         pass
@@ -162,6 +168,13 @@ class IEventData():
     def CreateInstance(Type,json:str):
         data = IEventData(Type())
         return data if not json else data.FromJson(json)
+
+    def populate(payload: dict):
+        context=Context.populate(payload.get('context'))
+        # if payload.get('apiSchemaVersion') == '10-01-2021-preview':
+        return demo1.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
+
+        
 
 
 class IEventRequest():
@@ -202,6 +215,12 @@ class IEventRequest():
         except exception as ex:
             return self.Failed(ex.msg)
 
+    def populate(result: dict):
+        response=IEventResponse.populate(result=result)
+        data=IEventData.populate(payload=result.get('payload'))
+        tokenclaims=result.get('tokenClaims') 
+        return demo1.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
+
 class TokenIssuanceStartResponse(IEventResponse):
     def __init__(self,
                 Description: str):
@@ -218,89 +237,104 @@ class TokenIssuanceStartResponse(IEventResponse):
 
 class AuthProtocol():
     def __init__(self,
-                Type: str,
-                TenantId: uuid):
-                self.Type=Type
-                self.TenantId=TenantId
+                type: str,
+                tenantId: str):
+                self.type=type
+                self.tenantId=tenantId
+
+    def populate(authProtocol: dict):
+        return AuthProtocol(**authProtocol)
 class Client():
     def __init__(self,
-                Ip: str):
-                self.Ip=Ip
+                ip: str):
+                self.ip=ip
+    def populate(client: dict):
+        return Client(**client)
 
 
 class Role():
     def __init__(self,
-                Id: uuid,
-                Value: str):
-                self.Id=Id
-                self.Value=Value
+                id: str,
+                value: str):
+                self.id=id
+                self.value=value
 
 class ServicePrincipalName():
     def __init__(self,
-                Url: str,
-                Uuid: uuid):
-                self.Url=Url
-                self.Uuid=Uuid
+                url: str,
+                uuid: uuid):
+                self.url=url
+                self.uuid=uuid
 
 listOfServicePrincipalName= list[ServicePrincipalName]
 
 class ServicePrincipal():
     def __init__(self,
-                Id: uuid,
-                AppId: uuid,
-                AppDisplayName: str,
-                DisplayName: str,
-                ServicePrincipalNames: listOfServicePrincipalName):
-                self.Id=Id
-                self.AppId=AppId
-                self.AppDisplayName=AppDisplayName
-                self.DisplayName=DisplayName
-                self.ServicePrincipalNames=ServicePrincipalNames
+                id: str,
+                appId: str,
+                appDisplayName: str,
+                displayName: str,
+                servicePrincipalNames: list[str]):
+                self.id=id
+                self.appId=appId
+                self.appDisplayName=appDisplayName
+                self.displayName=displayName
+                self.servicePrincipalNames=servicePrincipalNames
+    def populate(servicePrincipal: dict):
+        return ServicePrincipal(**servicePrincipal)
 
 class User():
     def __init__(self,
-                AgeGroup:str,
-                CompanyName:str,
-                Country:str,
-                CreatedDateTime:DateTime,
-                CreationType:str,
-                Department:str,
-                DisplayName:str,
-                GivenName:str,
-                LastPasswordChangeDateTime:DateTime,
-                Mail:str,
-                OnPremisesSamAccountName:str,
-                OnPremisesSecurityIdentifier:str,
-                OnPremiseUserPrincipalName:str,
-                PreferredDataLocation:str,
-                PreferredLanguage:str,
-                Surname:str,
-                UserPrincipalName:str,
-                UserType:str):
-                self.UserType=UserType
-                self.UserPrincipalName=UserPrincipalName
-                self.Surname=Surname
-                self.PreferredLanguage=PreferredLanguage
-                self.AgeGroup=AgeGroup
-                self.CompanyName=CompanyName
-                self.Country=Country
-                self.CreatedDateTime=CreatedDateTime
-                self.CreationType=CreationType
-                self.Department=Department
-                self.DisplayName=DisplayName
-                self.GivenName=GivenName
-                self.LastPasswordChangeDateTime=LastPasswordChangeDateTime
-                self.Mail=Mail
-                self.OnPremisesSamAccountName=OnPremisesSamAccountName
-                self.OnPremisesSecurityIdentifier=OnPremisesSecurityIdentifier
-                self.OnPremiseUserPrincipalName=OnPremiseUserPrincipalName
-                self.PreferredDataLocation=PreferredDataLocation
+                ageGroup:str,
+                companyName:str,
+                country:str,
+                createdDateTime:str,
+                creationType:str,
+                department:str,
+                displayName:str,
+                givenName:str,
+                lastPasswordChangeDateTime:str,
+                mail:str,
+                onPremisesSamAccountName:str,
+                onPremisesSecurityIdentifier:str,
+                onPremiseUserPrincipalName:str,
+                preferredDataLocation:str,
+                preferredLanguage:str,
+                surname:str,
+                userPrincipalName:str,
+                userType:str,
+                id:str):
+                self.id=id
+                self.userType=userType
+                self.userPrincipalName=userPrincipalName
+                self.surname=surname
+                self.preferredLanguage=preferredLanguage
+                self.ageGroup=ageGroup
+                self.companyName=companyName
+                self.country=country
+                self.createdDateTime=createdDateTime
+                self.creationType=creationType
+                self.department=department
+                self.displayName=displayName
+                self.givenName=givenName
+                self.lastPasswordChangeDateTime=lastPasswordChangeDateTime
+                self.mail=mail
+                self.onPremisesSamAccountName=onPremisesSamAccountName
+                self.onPremisesSecurityIdentifier=onPremisesSecurityIdentifier
+                self.onPremiseUserPrincipalName=onPremiseUserPrincipalName
+                self.preferredDataLocation=preferredDataLocation
+
+    def populate(user: dict):
+        return User(**user)
+
+                
 
 Roles=list[Role]
 
+
 class Context():
     def __init__(self,
-                CorrelationId:uuid,
+                CorrelationId:str,
                 Client:Client,
                 AuthProtocol:AuthProtocol,
                 ClientServicePrincipal: ServicePrincipal,
@@ -314,6 +348,14 @@ class Context():
                 self.AuthProtocol=AuthProtocol
                 self.Client=Client
                 self.CorrelationId=CorrelationId
+    
+    def populate(context: dict):
+        user=User.populate(context.get('user'))
+        client=Client.populate(context.get('client'))
+        authProtocol=AuthProtocol.populate(context.get('authProtocol'))
+        clientServicePrincipal=ServicePrincipal.populate(context.get('clientServicePrincipal'))
+        resourceServicePrincipal=ServicePrincipal.populate(context.get('resourceServicePrincipal'))
+        return Context(CorrelationId=context.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=context.get('roles'),AuthProtocol=authProtocol)
 
 class TokenIssuanceStartData(IEventData):
     def __init__(self,
@@ -360,11 +402,11 @@ class demo1():
 
     class TokenIssuanceStartData(IEventData):
         def __init__(self,
-                    EventId: uuid,
+                    EventId: str,
                     EventTime: DateTime,
                     EventVersion: str,
                     EventType: str,
-                    Context: str):
+                    Context: Context):
                     self.Context=Context
                     self.EventType=EventType
                     self.EventVersion=EventVersion
@@ -387,9 +429,34 @@ class demo1():
 
     #def populte()
 
+def populate(result: dict):
+     
+     payload=result.get('payload')
+     contextDict=payload.get('context')
+     userDict=contextDict.get('user')
+     user=User(**userDict)
+     authProtocolDict=contextDict.get('authProtocol')
+     a=AuthProtocol(**authProtocolDict)
+     clientServicePrincipalDict=contextDict.get('clientServicePrincipal')
+     clientServicePrincipal=ServicePrincipal(**clientServicePrincipalDict)
+     resourceServicePrincipalDict=contextDict.get('resourceServicePrincipal')
+     resourceServicePrincipal=ServicePrincipal(**resourceServicePrincipalDict)
+     clientDict=contextDict.get('client')
+     client=Client(**clientDict)
+
+     context=Context(CorrelationId=contextDict.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=contextDict.get('roles'),AuthProtocol=a)
+     
+     data=demo1.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
+     response=demo1.TokenIssuanceStartResponse(Description="test")
+     
+     tokenclaims=result.get('tokenClaims') 
+     request=demo1.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
+     resp=result.get('response')
+     statusMessage=result.get('statusMessage')
+     
     
         
-                
+          
 
         
 # Authentication Event Trigger
@@ -411,15 +478,17 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     def decode(cls,
                data: meta.Datum, *,
                trigger_metadata) -> typing.Any:
-        result=demo1.TokenIssuanceStartRequest()
+        # result=demo1.TokenIssuanceStartRequest()
         data_type = data.type
 
         # Durable functions extension always returns a string of json
         # See durable functions library's call_activity_task docs
         if data_type in ['string', 'json']:
             try:
-                callback = _deserialize_custom_object
-                result = json.loads(data.value, object_hook=callback)
+                # callback = _deserialize_custom_object
+                result = json.loads(data.value)
+                # populate(result=result)
+                test=IEventRequest.populate(result=result)
             except json.JSONDecodeError:
                 # String failover if the content is not json serializable
                 result = data.value
