@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from http import client
 from importlib import import_module
 import json
@@ -101,7 +102,7 @@ class RequestStatus(Enum):
      TokenInvalid = auto()
      Successful = auto()
 
-class IEventResponse():
+class IEventResponse(ABC):
     def __init__(self, HttpResponseMessage: HttpResponse,
                  Schema : str,
                  Body: str,
@@ -153,7 +154,7 @@ class IEventResponse():
     def populate(result: dict):
         return demo1.TokenIssuanceStartResponse(Description="test")
 
-class IEventData():
+class IEventData(ABC):
     def __init__(self):
         pass
     @classmethod
@@ -174,10 +175,7 @@ class IEventData():
         # if payload.get('apiSchemaVersion') == '10-01-2021-preview':
         return demo1.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
 
-        
-
-
-class IEventRequest():
+class IEventRequest(ABC):
     def __init__(self,
                 HttpRequestMessage: HttpRequest,
                 StatusMessage: str,
@@ -195,7 +193,8 @@ class IEventRequest():
     def ToString(self):
         return pickle.dumps(self)
     
-    def InstanceCreated(args):
+    abstractmethod
+    def CreateInstance(result:dict):
         pass
 
     def Failed(message: str):
@@ -216,24 +215,8 @@ class IEventRequest():
             return self.Failed(ex.msg)
 
     def populate(result: dict):
-        response=IEventResponse.populate(result=result)
-        data=IEventData.populate(payload=result.get('payload'))
-        tokenclaims=result.get('tokenClaims') 
-        return demo1.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
-
-class TokenIssuanceStartResponse(IEventResponse):
-    def __init__(self,
-                Description: str):
-                self.Description=Description
-    
-    def get_Description(self):
-        return self.Description
-    
-    def set_Description(self,value):
-        self.Description=value
-
-    def invalidate(self):
-        self.set_JsonValue(["addition","description"], self.Description)
+        if result.get("type")=="onTokenIssuanceStartCustomExtension" and result.get("apiSchemaVersion") == "10-01-2021-preview":
+            return demo1.TokenIssuanceStartRequest.CreateInstance(result=result)
 
 class AuthProtocol():
     def __init__(self,
@@ -357,39 +340,11 @@ class Context():
         resourceServicePrincipal=ServicePrincipal.populate(context.get('resourceServicePrincipal'))
         return Context(CorrelationId=context.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=context.get('roles'),AuthProtocol=authProtocol)
 
-class TokenIssuanceStartData(IEventData):
-    def __init__(self,
-                EventId: uuid,
-                EventTime: DateTime,
-                EventVersion: str,
-                EventType: str,
-                Context: str):
-                self.Context=Context
-                self.EventType=EventType
-                self.EventVersion=EventVersion
-                self.EventTime=EventTime
-                self.EventId=EventId
-
-
-
-class TokenIssuanceStartRequest(IEventRequest):
-    def __init__(self,
-                response: TokenIssuanceStartResponse,
-                payload: TokenIssuanceStartData,
-                TokenClaims: dict[str,str]):
-                self.TokenClaims=TokenClaims
-                self.response=response
-                self.payload=payload
-
-    def InstanceCreated(self,args: list):
-        self.TokenClaims=args[0]
-
-
 class demo1():
     class TokenIssuanceStartResponse(IEventResponse):
-        def __init__(self,
-                    Description: str):
-                    self.Description=Description
+        def __init__(self,**kargs):
+                    super().__init__(kargs)
+                    self.Description=kargs.get("description")
         
         def get_Description(self):
             return self.Description
@@ -414,19 +369,21 @@ class demo1():
                     self.EventId=EventId
 
 
-
     class TokenIssuanceStartRequest(IEventRequest):
         def __init__(self,
-                    response: TokenIssuanceStartResponse,
-                    payload: TokenIssuanceStartData,
+                    response: IEventResponse,
+                    payload: IEventData,
                     TokenClaims: dict[str,str]):
                     self.TokenClaims=TokenClaims
                     self.response=response
                     self.payload=payload
 
-        def InstanceCreated(self,args: list):
-            self.TokenClaims=args[0]
-
+        def CreateInstance(result:dict):
+            return demo1.TokenIssuanceStartRequest(
+                payload=demo1.TokenIssuanceStartData(result.get('payload')),
+                data=demo1.TokenIssuanceStartResponse(result),
+                tokenclaims=result.get('tokenClaims'))
+            
     #def populte()
 
 def populate(result: dict):
