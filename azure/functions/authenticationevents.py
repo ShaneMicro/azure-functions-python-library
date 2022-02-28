@@ -151,8 +151,7 @@ class IEventResponse(ABC):
         response.Body = body
         return response
 
-    def populate(result: dict):
-        return demo1.TokenIssuanceStartResponse(Description="test")
+    
 
 class IEventData(ABC):
     def __init__(self):
@@ -170,10 +169,7 @@ class IEventData(ABC):
         data = IEventData(Type())
         return data if not json else data.FromJson(json)
 
-    def populate(payload: dict):
-        context=Context.populate(payload.get('context'))
-        # if payload.get('apiSchemaVersion') == '10-01-2021-preview':
-        return demo1.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
+    
 
 class IEventRequest(ABC):
     def __init__(self,
@@ -215,8 +211,8 @@ class IEventRequest(ABC):
             return self.Failed(ex.msg)
 
     def populate(result: dict):
-        if result.get("type")=="onTokenIssuanceStartCustomExtension" and result.get("apiSchemaVersion") == "10-01-2021-preview":
-            return demo1.TokenIssuanceStartRequest.CreateInstance(result=result)
+        if result.get("payload").get('eventType') is None and result.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+            return preview_10_01_2021.TokenIssuanceStartRequest.CreateInstance(result=result)
 
 class AuthProtocol():
     def __init__(self,
@@ -340,11 +336,11 @@ class Context():
         resourceServicePrincipal=ServicePrincipal.populate(context.get('resourceServicePrincipal'))
         return Context(CorrelationId=context.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=context.get('roles'),AuthProtocol=authProtocol)
 
-class demo1():
+class preview_10_01_2021():
     class TokenIssuanceStartResponse(IEventResponse):
-        def __init__(self,**kargs):
-                    super().__init__(kargs)
-                    self.Description=kargs.get("description")
+        def __init__(self,Description):
+                    # super().__init__(kargs)
+                    self.Description=Description
         
         def get_Description(self):
             return self.Description
@@ -368,6 +364,10 @@ class demo1():
                     self.EventTime=EventTime
                     self.EventId=EventId
 
+        def CreateInstance(payload: dict):
+            context=Context.populate(payload.get('context'))
+            return preview_10_01_2021.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
+
 
     class TokenIssuanceStartRequest(IEventRequest):
         def __init__(self,
@@ -379,43 +379,12 @@ class demo1():
                     self.payload=payload
 
         def CreateInstance(result:dict):
-            return demo1.TokenIssuanceStartRequest(
-                payload=demo1.TokenIssuanceStartData(result.get('payload')),
-                data=demo1.TokenIssuanceStartResponse(result),
-                tokenclaims=result.get('tokenClaims'))
+            response=preview_10_01_2021.TokenIssuanceStartResponse(Description="test")
+            data=preview_10_01_2021.TokenIssuanceStartData.CreateInstance(payload=result.get('payload'))
+            tokenclaims=result.get('tokenClaims') 
+            return preview_10_01_2021.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
             
-    #def populte()
-
-def populate(result: dict):
-     
-     payload=result.get('payload')
-     contextDict=payload.get('context')
-     userDict=contextDict.get('user')
-     user=User(**userDict)
-     authProtocolDict=contextDict.get('authProtocol')
-     a=AuthProtocol(**authProtocolDict)
-     clientServicePrincipalDict=contextDict.get('clientServicePrincipal')
-     clientServicePrincipal=ServicePrincipal(**clientServicePrincipalDict)
-     resourceServicePrincipalDict=contextDict.get('resourceServicePrincipal')
-     resourceServicePrincipal=ServicePrincipal(**resourceServicePrincipalDict)
-     clientDict=contextDict.get('client')
-     client=Client(**clientDict)
-
-     context=Context(CorrelationId=contextDict.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=contextDict.get('roles'),AuthProtocol=a)
-     
-     data=demo1.TokenIssuanceStartData(EventId=payload.get('eventListenerId'),EventTime=payload.get('time'),EventType=payload.get('type'),EventVersion=payload.get('apiSchemaVersion'),Context=context)
-     response=demo1.TokenIssuanceStartResponse(Description="test")
-     
-     tokenclaims=result.get('tokenClaims') 
-     request=demo1.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
-     resp=result.get('response')
-     statusMessage=result.get('statusMessage')
-     
-    
-        
-          
-
-        
+ 
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(meta.InConverter,
                                meta.OutConverter,
@@ -444,8 +413,9 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
             try:
                 # callback = _deserialize_custom_object
                 result = json.loads(data.value)
-                # populate(result=result)
                 test=IEventRequest.populate(result=result)
+                # populate(result=result)
+                # test=IEventRequest.populate(result=result)
             except json.JSONDecodeError:
                 # String failover if the content is not json serializable
                 result = data.value
