@@ -4,6 +4,8 @@ from importlib import import_module
 import json
 from logging import exception
 import pickle
+from re import T
+from this import d
 from urllib import request
 
 
@@ -151,7 +153,67 @@ class IEventResponse(ABC):
         response.Body = body
         return response
 
+class IActionable(ABC):
+
+        abstractmethod    
+        def InvalidateActions():
+            pass
     
+class IEventAction(ABC):
+    def __init__(self,
+                ActionType: str):
+                self.ActionType=ActionType
+    
+    def BuildActionBody():
+        pass
+
+class ITokenIssuanceAction(IEventAction):
+    def __init__(self,
+                ActionType):
+                self.ActionType=ActionType
+    
+    abstractmethod
+    def BuildActionBody():
+        pass
+
+class Claim():
+    def __init__(self,
+                Id: str,
+                Values: list[str]):
+                self.Id=Id
+                self.Values=Values
+
+class ProvideClaimsForToken(ITokenIssuanceAction):
+    def __init__(self,
+                Claims: list[Claim]):
+                self.ActionType="ProvideClaimsForToken"
+                self.Claims=Claims
+
+    def AddClaim(self,id: str, values: list[str]):
+        self.Claims.append(Claim(Id=id,Values=values))
+
+    def BuildActionBody(self):
+        temp:dict
+        for item in self.Claims:
+            temp[item.Id]=item.Values
+        return json.dumps(temp)
+
+class IActionableResponse(IEventResponse,IActionable):
+    def __init__(self,
+                Actions: list[IEventAction]):
+                self.Actions=Actions
+
+    def InvalidateActions(self):
+        actionElement = "actions"
+        typeProperty = "type"
+        Payload = self.JsonBody
+        
+
+    def Invalidate(self):
+        self.InvalidateActions()
+
+    
+
 
 class IEventData(ABC):
     def __init__(self):
@@ -211,7 +273,7 @@ class IEventRequest(ABC):
             return self.Failed(ex.msg)
 
     def populate(result: dict):
-        if result.get("payload").get('eventType') is None and result.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+        if result.get("payload").get('type') =='onTokenIssuanceStartCustomExtension' and result.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
             return preview_10_01_2021.TokenIssuanceStartRequest.CreateInstance(result=result)
 
 class AuthProtocol():
@@ -329,27 +391,20 @@ class Context():
                 self.CorrelationId=CorrelationId
     
     def populate(context: dict):
-        user=User.populate(context.get('user'))
-        client=Client.populate(context.get('client'))
-        authProtocol=AuthProtocol.populate(context.get('authProtocol'))
-        clientServicePrincipal=ServicePrincipal.populate(context.get('clientServicePrincipal'))
-        resourceServicePrincipal=ServicePrincipal.populate(context.get('resourceServicePrincipal'))
-        return Context(CorrelationId=context.get('correlationId'),User=user,Client=client,ClientServicePrincipal=clientServicePrincipal,ResourceServicePrincipal=resourceServicePrincipal,Roles=context.get('roles'),AuthProtocol=authProtocol)
+        return Context(CorrelationId=context.get('correlationId'),
+        User=User.populate(context.get('user')),
+        Client=Client.populate(context.get('client')),
+        ClientServicePrincipal=ServicePrincipal.populate(context.get('clientServicePrincipal')),
+        ResourceServicePrincipal=ServicePrincipal.populate(context.get('resourceServicePrincipal')),
+        Roles=context.get('roles'),
+        AuthProtocol=AuthProtocol.populate(context.get('authProtocol')))
 
 class preview_10_01_2021():
     class TokenIssuanceStartResponse(IEventResponse):
-        def __init__(self,Description):
+        def __init__(self):
+            pass
                     # super().__init__(kargs)
-                    self.Description=Description
-        
-        def get_Description(self):
-            return self.Description
-        
-        def set_Description(self,value):
-            self.Description=value
-
-        def invalidate(self):
-            self.set_JsonValue(["addition","description"], self.Description)
+                    
 
     class TokenIssuanceStartData(IEventData):
         def __init__(self,
@@ -379,7 +434,7 @@ class preview_10_01_2021():
                     self.payload=payload
 
         def CreateInstance(result:dict):
-            response=preview_10_01_2021.TokenIssuanceStartResponse(Description="test")
+            response=preview_10_01_2021.TokenIssuanceStartResponse()
             data=preview_10_01_2021.TokenIssuanceStartData.CreateInstance(payload=result.get('payload'))
             tokenclaims=result.get('tokenClaims') 
             return preview_10_01_2021.TokenIssuanceStartRequest(payload=data,response=response,TokenClaims=tokenclaims)
