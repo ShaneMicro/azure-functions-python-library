@@ -3,8 +3,11 @@
 
 import abc
 import datetime
+from enum import auto,Enum
 import io
+from logging import exception
 import typing
+
 
 
 T = typing.TypeVar('T')
@@ -421,3 +424,88 @@ class OrchestrationContext(abc.ABC):
     @abc.abstractmethod
     def body(self) -> str:
         pass
+
+class RequestStatus(Enum):
+     Failed = auto()
+     TokenInvalid = auto()
+     Successful = auto()
+
+class IEventResponse(abc.ABC):
+    def __init__(self,
+                 schema : typing.Optional[str],
+                 body: typing.Optional[str],
+                 jsonBody: typing.Optional[str]):
+                 self.schema= schema
+                 self.body=body
+                 self.jsonBody=jsonBody
+
+
+    def invalidate():
+        pass
+    
+    @staticmethod
+    def createInstance(type : type, schema : str, body : str):
+        response =IEventResponse(type())
+        response.Schema = schema
+        response.Body = body
+        return response
+
+class IActionable(abc.ABC):
+
+        abc.abstractmethod    
+        def invalidateActions():
+            pass
+    
+class IEventAction(abc.ABC):
+    def __init__(self,
+                actionType: str):
+                self.actionType=actionType
+    
+    abc.abstractmethod
+    def buildActionBody():
+        pass
+
+class ITokenIssuanceAction(IEventAction):
+    def __init__(self,
+                actionType):
+                self.actionType=actionType
+    
+    abc.abstractmethod
+    def buildActionBody():
+        pass
+
+class IEventData(abc.ABC):
+    def __init__(self):
+        pass
+    @classmethod
+    def FromJson(json:str) :
+        jsonString = json.loads(json)
+        return IEventData(**jsonString)
+
+    @staticmethod
+    def createInstance(Type,json:str):
+        data = IEventData(Type())
+        return data if not json else data.FromJson(json)
+
+
+class IEventRequest(abc.ABC):
+    def __init__(self,
+                statusMessage: str,
+                requestStatus: RequestStatus,
+                response: IEventResponse,
+                payload: IEventData,
+                name: str):
+        self.statusMessage=statusMessage
+        self.requestStatus=requestStatus
+        self.response=response
+        self.payload=payload
+        self.name=name
+
+    
+    abc.abstractmethod
+    def createInstance(result:dict):
+        pass
+
+
+    
+
