@@ -127,8 +127,8 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
             try:
                 # callback = _deserialize_custom_object
                 response = json.loads(data.value)
-                if result.get("payload").get('type') =='onTokenIssuanceStartCustomExtension' and result.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
-                    return _authenticationevents.preview_10_01_2021.TokenIssuanceStartRequest.createInstance(result=result)
+                if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension' and response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+                    return _authenticationevents.preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
             
                 # test=IEventRequest.populate(result=result)
             except json.JSONDecodeError:

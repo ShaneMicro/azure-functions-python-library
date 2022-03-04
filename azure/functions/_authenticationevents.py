@@ -4,13 +4,15 @@ import azure.functions._abc as _abc
 from xmlrpc.client import DateTime
 import uuid
 
-class ITokenIssuanceAction(_abc.IEventAction):
+
+
+class ITokenIssuanceAction(_abc.IAuthenticationEventAction):
     def __init__(self,
                 actionType):
                 self.actionType=actionType
     
     abstractmethod
-    def BuildActionBody():
+    def build_action_body():
         pass
 
 class Claim():
@@ -26,28 +28,28 @@ class ProvideClaimsForToken(ITokenIssuanceAction):
                 self.actionType="ProvideClaimsForToken"
                 self.claims=claims
 
-    def addClaim(self,id: str, values: list[str]):
+    def add_claim(self,id: str, values: list[str]):
         self.claims.append(Claim(Id=id,Values=values))
 
-    def buildActionBody(self):
+    def build_action_body(self):
         temp:dict
         for item in self.claims:
             temp[item.Id]=item.Values
         return json.dumps(temp)
 
-class IActionableResponse(_abc.IEventResponse,_abc.IActionable):
+class IActionableResponse(_abc.IAuthenticationEventResponse,_abc.IAuthenticationEventActionable):
     def __init__(self,
-                actions: list[_abc.IEventAction]):
+                actions: list[_abc.IAuthenticationEventAction]):
                 self.actions=actions
 
-    def invalidateActions(self):
+    def invalidate_actions(self):
         actionElement = "actions"
         typeProperty = "type"
         Payload = self.JsonBody
         
 
     def invalidate(self):
-        self.invalidateActions()
+        self.invalidate_actions()
 
 class AuthProtocol():
     def __init__(self,
@@ -173,13 +175,13 @@ class Context():
         authProtocol=AuthProtocol.populate(context.get('authProtocol')))
 
 class preview_10_01_2021():
-    class TokenIssuanceStartResponse(_abc.IEventResponse):
+    class TokenIssuanceStartResponse(_abc.IAuthenticationEventResponse):
         def __init__(self):
             pass
                     # super().__init__(kargs)
                     
 
-    class TokenIssuanceStartData(_abc.IEventData):
+    class TokenIssuanceStartData(_abc.IAuthenticationEventData):
         def __init__(self,
                     eventId: str,
                     eventTime: DateTime,
@@ -192,23 +194,23 @@ class preview_10_01_2021():
                     self.eventTime=eventTime
                     self.eventId=eventId
 
-        def createInstance(payload: dict):
+        def create_instance(payload: dict):
             context=Context.populate(payload.get('context'))
             return preview_10_01_2021.TokenIssuanceStartData(eventId=payload.get('eventListenerId'),eventTime=payload.get('time'),eventType=payload.get('type'),eventVersion=payload.get('apiSchemaVersion'),context=context)
 
 
-    class TokenIssuanceStartRequest(_abc.IEventRequest):
+    class TokenIssuanceStartRequest(_abc.IAuthenticationEventRequest):
         def __init__(self,
-                    response: _abc.IEventResponse,
-                    payload: _abc.IEventData,
+                    response: _abc.IAuthenticationEventResponse,
+                    payload: _abc.IAuthenticationEventData,
                     tokenClaims: dict[str,str]):
                     self.tokenClaims=tokenClaims
                     self.response=response
                     self.payload=payload
 
-        def createInstance(result:dict):
+        def create_instance(result:dict):
             response=preview_10_01_2021.TokenIssuanceStartResponse()
-            data=preview_10_01_2021.TokenIssuanceStartData.createInstance(payload=result.get('payload'))
+            data=preview_10_01_2021.TokenIssuanceStartData.create_instance(payload=result.get('payload'))
             tokenclaims=result.get('tokenClaims') 
             return preview_10_01_2021.TokenIssuanceStartRequest(payload=data,response=response,tokenClaims=tokenclaims)
             

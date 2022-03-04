@@ -425,12 +425,12 @@ class OrchestrationContext(abc.ABC):
     def body(self) -> str:
         pass
 
-class RequestStatus(Enum):
+class AuthenticationEventRequestStatus(Enum):
      Failed = auto()
      TokenInvalid = auto()
      Successful = auto()
 
-class IEventResponse(abc.ABC):
+class IAuthenticationEventResponse(abc.ABC):
     def __init__(self,
                  schema : typing.Optional[str],
                  body: typing.Optional[str],
@@ -444,56 +444,49 @@ class IEventResponse(abc.ABC):
         pass
     
     @staticmethod
-    def createInstance(type : type, schema : str, body : str):
-        response =IEventResponse(type())
+    def create_instance(type : type, schema : str, body : str):
+        response =IAuthenticationEventResponse(type())
         response.Schema = schema
         response.Body = body
         return response
 
-class IActionable(abc.ABC):
+class IAuthenticationEventActionable(abc.ABC):
 
         abc.abstractmethod    
-        def invalidateActions():
+        def invalidate_actions():
             pass
     
-class IEventAction(abc.ABC):
+class IAuthenticationEventAction(abc.ABC):
     def __init__(self,
                 actionType: str):
                 self.actionType=actionType
     
     abc.abstractmethod
-    def buildActionBody():
+    def build_action_body():
         pass
 
-class ITokenIssuanceAction(IEventAction):
-    def __init__(self,
-                actionType):
-                self.actionType=actionType
-    
-    abc.abstractmethod
-    def buildActionBody():
-        pass
 
-class IEventData(abc.ABC):
+
+class IAuthenticationEventData(abc.ABC):
     def __init__(self):
         pass
     @classmethod
-    def FromJson(json:str) :
+    def from_json(json:str) :
         jsonString = json.loads(json)
-        return IEventData(**jsonString)
+        return IAuthenticationEventData(**jsonString)
 
     @staticmethod
-    def createInstance(Type,json:str):
-        data = IEventData(Type())
-        return data if not json else data.FromJson(json)
+    def create_instance(Type,json:str):
+        data = IAuthenticationEventData(Type())
+        return data if not json else data.from_json(json)
 
 
-class IEventRequest(abc.ABC):
+class IAuthenticationEventRequest(abc.ABC):
     def __init__(self,
                 statusMessage: str,
-                requestStatus: RequestStatus,
-                response: IEventResponse,
-                payload: IEventData,
+                requestStatus: AuthenticationEventRequestStatus,
+                response: IAuthenticationEventResponse,
+                payload: IAuthenticationEventData,
                 name: str):
         self.statusMessage=statusMessage
         self.requestStatus=requestStatus
@@ -503,7 +496,7 @@ class IEventRequest(abc.ABC):
 
     
     abc.abstractmethod
-    def createInstance(result:dict):
+    def create_instance(result:dict):
         pass
 
 
