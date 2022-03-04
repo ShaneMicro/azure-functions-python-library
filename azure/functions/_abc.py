@@ -469,15 +469,15 @@ class IAuthenticationEventAction(abc.ABC):
 
 class IAuthenticationEventData(abc.ABC):
     def __init__(self,
-                eventId: str,
-                eventTime: str,
-                eventVersion: str,
-                eventType: str,
+                eventListenerId: str,
+                time: str,
+                apiSchemaVersion: str,
+                type: str,
                 customExtensionId: str):
-                self.type=eventType
-                self.apiSchemaVersion=eventVersion
-                self.eventTime=eventTime
-                self.eventListenerId=eventId
+                self.type=type
+                self.apiSchemaVersion=apiSchemaVersion
+                self.time=time
+                self.eventListenerId=eventListenerId
                 self.customExtensionId=customExtensionId
 
     @classmethod
