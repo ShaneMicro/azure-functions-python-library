@@ -472,11 +472,13 @@ class IAuthenticationEventData(abc.ABC):
                 eventId: str,
                 eventTime: str,
                 eventVersion: str,
-                eventType: str):
-                self.eventType=eventType
-                self.eventVersion=eventVersion
+                eventType: str,
+                customExtensionId: str):
+                self.type=eventType
+                self.apiSchemaVersion=eventVersion
                 self.eventTime=eventTime
-                self.eventId=eventId
+                self.eventListenerId=eventId
+                self.customExtensionId=customExtensionId
 
     @classmethod
     def from_json(json:str) :

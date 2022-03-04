@@ -187,9 +187,10 @@ class preview_10_01_2021():
                     eventTime: DateTime,
                     eventVersion: str,
                     eventType: str,
-                    context: Context):
+                    context: Context,
+                    customExtensionId: str):
                     self.context=context
-                    super.__init__(eventId=eventId, eventTime=eventTime,eventType=eventType,eventVersion=eventVersion)
+                    super.__init__(eventId=eventId, eventTime=eventTime,eventType=eventType,eventVersion=eventVersion,customExtensionId=customExtensionId)
 
         def create_instance(payload: dict):
             context=Context.populate(payload.get('context'))
