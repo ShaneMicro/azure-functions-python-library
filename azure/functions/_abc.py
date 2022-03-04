@@ -468,8 +468,16 @@ class IAuthenticationEventAction(abc.ABC):
 
 
 class IAuthenticationEventData(abc.ABC):
-    def __init__(self):
-        pass
+    def __init__(self,
+                eventId: str,
+                eventTime: str,
+                eventVersion: str,
+                eventType: str):
+                self.eventType=eventType
+                self.eventVersion=eventVersion
+                self.eventTime=eventTime
+                self.eventId=eventId
+
     @classmethod
     def from_json(json:str) :
         jsonString = json.loads(json)

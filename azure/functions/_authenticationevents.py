@@ -189,10 +189,7 @@ class preview_10_01_2021():
                     eventType: str,
                     context: Context):
                     self.context=context
-                    self.eventType=eventType
-                    self.eventVersion=eventVersion
-                    self.eventTime=eventTime
-                    self.eventId=eventId
+                    super.__init__(eventId=eventId, eventTime=eventTime,eventType=eventType,eventVersion=eventVersion)
 
         def create_instance(payload: dict):
             context=Context.populate(payload.get('context'))
