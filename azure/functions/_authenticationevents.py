@@ -11,10 +11,6 @@ class ITokenIssuanceAction(_abc.IAuthenticationEventAction):
     def __init__(self,
                 actionType):
                 self.actionType=actionType
-    
-    abstractmethod
-    def build_action_body():
-        pass
 
 class Claim():
     def __init__(self,
@@ -37,29 +33,6 @@ class ProvideClaimsForToken(ITokenIssuanceAction):
         for item in self.claims:
             temp[item.Id]=item.Values
         return json.dumps(temp)
-
-class IActionableResponse(_abc.IAuthenticationEventResponse,_abc.IAuthenticationEventActionable):
-    def __init__(self,
-                actions: list[_abc.IAuthenticationEventAction]):
-                self.actions=actions
-
-    def invalidate_actions(self):
-        actionElement = "actions"
-        typeProperty = "type"
-        payload: dict = self.JsonBody
-
-        if not payload.contains_key(actionElement):
-            payload[actionElement]=[]
-
-        jActions = payload[actionElement]
-
-        for action in self.actions:
-            jBody = action.BuildActionBody()
-            
-        
-
-    def invalidate(self):
-        self.invalidate_actions()
 
 class AuthProtocol():
     def __init__(self,
@@ -185,14 +158,16 @@ class Context():
         authProtocol=AuthProtocol.populate(context.get('authProtocol')))
 
 class preview_10_01_2021():
-    class TokenIssuanceStartResponse(_abc.IAuthenticationEventResponse):
+    class TokenIssuanceStartResponse(_abc.IAuthenticationEventIActionableResponse[ITokenIssuanceAction]):
         def __init__(self,
                 schema : typing.Optional[str],
-                body: typing.Optional[str]):
-                super().__init__(schema=schema,body=body)
+                body: typing.Optional[str],
+                actions: list[ITokenIssuanceAction]):
+
+                super().__init__(schema=schema,body=body, actions=actions)
 
         def create_instance(response:dict):
-            return preview_10_01_2021.TokenIssuanceStartResponse(schema=response.get('schema'),body=response.get('body'))
+            return preview_10_01_2021.TokenIssuanceStartResponse(schema=response.get('schema'),body=response.get('body'),actions=[])
                     
 
     class TokenIssuanceStartData(_abc.IAuthenticationEventData):
@@ -210,14 +185,18 @@ class preview_10_01_2021():
             return preview_10_01_2021.TokenIssuanceStartData(eventListenerId=payload.get('eventListenerId'),time=payload.get('time'),etype=payload.get('type'),apiSchemaVersion=payload.get('apiSchemaVersion'),context=Context.populate(payload.get('context')),customExtensionId=payload.get('customExtensionId'))
 
 
-    class TokenIssuanceStartRequest(_abc.IAuthenticationEventRequest):
+    class TokenIssuanceStartRequest(_abc.IAuthenticationEventRequest[TokenIssuanceStartResponse,TokenIssuanceStartData]):
         def __init__(self,
-                    response: _abc.IAuthenticationEventResponse,
-                    payload: _abc.IAuthenticationEventData,
+                    statusMessage: str,
+                    requestStatus: _abc.AuthenticationEventRequestStatus,
+                    response: _abc.response_type,
+                    payload: _abc.payload_type,
+                    name: str,
                     tokenClaims: dict[str,str]):
+
+                    super().__init__(statusMessage=statusMessage, requestStatus=requestStatus,response=response,payload=payload,name="")
                     self.tokenClaims=tokenClaims
-                    self.response=response
-                    self.payload=payload
+                    
 
         def create_instance(result:dict):
             response=preview_10_01_2021.TokenIssuanceStartResponse.create_instance(response=result.get('response'))
