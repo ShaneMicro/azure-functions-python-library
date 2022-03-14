@@ -3,10 +3,8 @@ from http import client
 from importlib import import_module
 import json
 from logging import exception
-import pickle
 from re import T
-from this import d
-from urllib import request
+from this import d 
 import azure.functions._abc as _abc
 import azure.functions._authenticationevents as _authenticationevents
 
@@ -54,7 +52,7 @@ def _serialize_custom_object(obj):
         "__module__": obj.__module__,
         "__data__": obj_type.to_json(obj)
     }
-
+ 
 
 def _deserialize_custom_object(obj: dict) -> object:
     """Deserialize a user-defined object from JSON.

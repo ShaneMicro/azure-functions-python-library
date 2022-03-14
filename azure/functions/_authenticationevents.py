@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 import json
+import typing
 import azure.functions._abc as _abc
 from xmlrpc.client import DateTime
 import uuid
@@ -45,7 +46,16 @@ class IActionableResponse(_abc.IAuthenticationEventResponse,_abc.IAuthentication
     def invalidate_actions(self):
         actionElement = "actions"
         typeProperty = "type"
-        Payload = self.JsonBody
+        payload: dict = self.JsonBody
+
+        if not payload.contains_key(actionElement):
+            payload[actionElement]=[]
+
+        jActions = payload[actionElement]
+
+        for action in self.actions:
+            jBody = action.BuildActionBody()
+            
         
 
     def invalidate(self):
@@ -176,24 +186,28 @@ class Context():
 
 class preview_10_01_2021():
     class TokenIssuanceStartResponse(_abc.IAuthenticationEventResponse):
-        def __init__(self):
-            pass
-                    # super().__init__(kargs)
+        def __init__(self,
+                schema : typing.Optional[str],
+                body: typing.Optional[str]):
+                super().__init__(schema=schema,body=body)
+
+        def create_instance(response:dict):
+            return preview_10_01_2021.TokenIssuanceStartResponse(schema=response.get('schema'),body=response.get('body'))
                     
 
     class TokenIssuanceStartData(_abc.IAuthenticationEventData):
         def __init__(self,
-                    eventListenerId: str,
-                    time: DateTime,
-                    apiSchemaVersion: str,
-                    type: str,
+                    eventListenerId: typing.Optional[str],
+                    time: typing.Optional[str],
+                    apiSchemaVersion: typing.Optional[str],
+                    etype: typing.Optional[str],
                     context: Context,
-                    customExtensionId: str):
+                    customExtensionId: typing.Optional[str]):
                     self.context=context
-                    super.__init__(eventListenerId=eventListenerId, time=time,type=type,apiSchemaVersion=apiSchemaVersion,customExtensionId=customExtensionId)
+                    super().__init__(eventListenerId=eventListenerId, time=time,etype=etype,apiSchemaVersion=apiSchemaVersion,customExtensionId=customExtensionId)
 
         def create_instance(payload: dict):
-            return preview_10_01_2021.TokenIssuanceStartData(eventListenerId=payload.get('eventListenerId'),time=payload.get('time'),type=payload.get('type'),apiSchemaVersion=payload.get('apiSchemaVersion'),context=Context.populate(payload.get('context')),customExtensionId=payload.get('customExtensionId'))
+            return preview_10_01_2021.TokenIssuanceStartData(eventListenerId=payload.get('eventListenerId'),time=payload.get('time'),etype=payload.get('type'),apiSchemaVersion=payload.get('apiSchemaVersion'),context=Context.populate(payload.get('context')),customExtensionId=payload.get('customExtensionId'))
 
 
     class TokenIssuanceStartRequest(_abc.IAuthenticationEventRequest):
@@ -206,7 +220,7 @@ class preview_10_01_2021():
                     self.payload=payload
 
         def create_instance(result:dict):
-            response=preview_10_01_2021.TokenIssuanceStartResponse()
+            response=preview_10_01_2021.TokenIssuanceStartResponse.create_instance(response=result.get('response'))
             data=preview_10_01_2021.TokenIssuanceStartData.create_instance(payload=result.get('payload'))
             tokenclaims=result.get('tokenClaims') 
             return preview_10_01_2021.TokenIssuanceStartRequest(payload=data,response=response,tokenClaims=tokenclaims)
