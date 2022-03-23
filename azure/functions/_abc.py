@@ -426,9 +426,9 @@ class OrchestrationContext(abc.ABC):
 
 
 class AuthenticationEventRequestStatus(Enum):
-    Failed = auto()
-    TokenInvalid = auto()
-    Successful = auto()
+    Failed = 'Failed'
+    TokenInvalid = 'TokenInvalid'
+    Successful = 'Successful'
 
 
 class IAuthenticationEventResponse(abc.ABC):

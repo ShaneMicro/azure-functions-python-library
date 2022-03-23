@@ -10,6 +10,7 @@ import azure.functions._authenticationevents as _authenticationevents
 
 
 
+
 import typing
 import urllib
 from enum import Enum, auto

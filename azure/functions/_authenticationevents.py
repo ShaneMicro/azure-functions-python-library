@@ -6,6 +6,42 @@ from xmlrpc.client import DateTime
 import uuid
 
 
+#test
+
+def _serialize_custom_object(obj):
+    """Serialize a user-defined object to JSON.
+
+    This function gets called when `json.dumps` cannot serialize
+    an object and returns a serializable dictionary containing enough
+    metadata to recontrust the original object.
+
+    Parameters
+    ----------
+    obj: Object
+        The object to serialize
+
+    Returns
+    -------
+    dict_obj: A serializable dictionary with enough metadata to reconstruct
+              `obj`
+
+    Exceptions
+    ----------
+    TypeError:
+        Raise if `obj` does not contain a `to_json` attribute
+    """
+    # 'safety' guard: raise error if object does not
+    # support serialization
+    if not hasattr(obj, "to_json"):
+        raise TypeError(f"class {type(obj)} does not expose a `to_json` "
+                        "function")
+    # Encode to json using the object's `to_json`
+    obj_type = type(obj)
+    return {
+        "__class__": obj.__class__.__name__,
+        "__module__": obj.__module__,
+        "__data__": obj_type.to_json(obj)
+    }
 
 class ITokenIssuanceAction(_abc.IAuthenticationEventAction):
     def __init__(self,
@@ -18,12 +54,29 @@ class Claim():
                 values: list[str]):
                 self.id=id
                 self.values=values
+                print("testing the code")
+
+
+    def to_json(self):
+        object_dict={
+            self.id:self.values
+        }
+        return json.dumps(object_dict)
 
 class ProvideClaimsForToken(ITokenIssuanceAction):
     def __init__(self,
                 claims: list[Claim]):
                 self.actionType="ProvideClaimsForToken"
                 self.claims=claims
+                print("testing the code")
+
+    def to_json(self):
+        object_dict={
+            "actionType": self.actionType
+        }
+        callback = _serialize_custom_object
+        object_dict["claims"]=json.dump(self.claims,default=callback)
+        return json.dumps(object_dict)
 
     def add_claim(self,id: str, values: list[str]):
         self.claims.append(Claim(Id=id,Values=values))
@@ -168,6 +221,14 @@ class preview_10_01_2021():
 
         def create_instance(response:dict):
             return preview_10_01_2021.TokenIssuanceStartResponse(schema=response.get('schema'),body=response.get('body'),actions=[])
+
+        def to_json(self):
+            object_dict={"schema":self.schema, 
+                         "body":self.body                        
+                        }
+            callback = _serialize_custom_object
+            object_dict["actions"]=json.dumps(self.actions,default=callback)
+            return json.dumps(object_dict)
                     
 
     class TokenIssuanceStartData(_abc.IAuthenticationEventData):
@@ -191,7 +252,6 @@ class preview_10_01_2021():
                     requestStatus: _abc.AuthenticationEventRequestStatus,
                     response: _abc.response_type,
                     payload: _abc.payload_type,
-                    name: str,
                     tokenClaims: dict[str,str]):
 
                     super().__init__(statusMessage=statusMessage, requestStatus=requestStatus,response=response,payload=payload,name="")
@@ -202,5 +262,5 @@ class preview_10_01_2021():
             response=preview_10_01_2021.TokenIssuanceStartResponse.create_instance(response=result.get('response'))
             data=preview_10_01_2021.TokenIssuanceStartData.create_instance(payload=result.get('payload'))
             tokenclaims=result.get('tokenClaims') 
-            return preview_10_01_2021.TokenIssuanceStartRequest(payload=data,response=response,tokenClaims=tokenclaims)
+            return preview_10_01_2021.TokenIssuanceStartRequest(statusMessage=result.get("statusMessage"), requestStatus=_abc.AuthenticationEventRequestStatus(result.get("requestStatus")), response=response, payload=data, tokenClaims=tokenclaims)
             
