@@ -147,7 +147,7 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
             callback = _serialize_custom_object
             obj_type = type(obj)
             result = obj_type.to_json(obj)
-            final= str(result)
+            final= json.dumps(result)
         except TypeError:
             raise ValueError(
                 f'authentication event trigger output must be json serializable ({obj})')

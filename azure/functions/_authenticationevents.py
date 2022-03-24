@@ -53,8 +53,8 @@ class Claim():
 
 
     def to_json(self):
-        object_dict={
-            self.id:self.values
+        object_dict={"id":self.id,
+                     "values":self.values
         }
         return object_dict
 
