@@ -48,11 +48,8 @@ def _serialize_custom_object(obj):
                         "function")
     # Encode to json using the object's `to_json`
     obj_type = type(obj)
-    return {
-        "__class__": obj.__class__.__name__,
-        "__module__": obj.__module__,
-        "__data__": obj_type.to_json(obj)
-    }
+    return  obj_type.to_json(obj)
+    
  
 
 def _deserialize_custom_object(obj: dict) -> object:
@@ -148,12 +145,14 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                expected_type: typing.Optional[type]) -> meta.Datum:
         try:
             callback = _serialize_custom_object
-            result = json.dumps(obj, default=callback)
+            obj_type = type(obj)
+            result = obj_type.to_json(obj)
+            final= str(result)
         except TypeError:
             raise ValueError(
                 f'authentication event trigger output must be json serializable ({obj})')
 
-        return meta.Datum(type='json', value=result)
+        return meta.Datum(type='json', value=final)
 
     @classmethod
     def has_implicit_output(cls) -> bool:

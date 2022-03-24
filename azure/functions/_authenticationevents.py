@@ -37,12 +37,8 @@ def _serialize_custom_object(obj):
                         "function")
     # Encode to json using the object's `to_json`
     obj_type = type(obj)
-    return {
-        "__class__": obj.__class__.__name__,
-        "__module__": obj.__module__,
-        "__data__": obj_type.to_json(obj)
-    }
-
+    return obj_type.to_json(obj)
+    
 class ITokenIssuanceAction(_abc.IAuthenticationEventAction):
     def __init__(self,
                 actionType):
@@ -54,29 +50,28 @@ class Claim():
                 values: list[str]):
                 self.id=id
                 self.values=values
-                print("testing the code")
 
 
     def to_json(self):
         object_dict={
             self.id:self.values
         }
-        return json.dumps(object_dict)
+        return object_dict
 
 class ProvideClaimsForToken(ITokenIssuanceAction):
     def __init__(self,
                 claims: list[Claim]):
                 self.actionType="ProvideClaimsForToken"
                 self.claims=claims
-                print("testing the code")
-
+                
     def to_json(self):
         object_dict={
             "actionType": self.actionType
         }
         callback = _serialize_custom_object
-        object_dict["claims"]=json.dump(self.claims,default=callback)
-        return json.dumps(object_dict)
+        temp=json.dumps(self.claims,default=callback)
+        object_dict["claims"]=json.loads(temp)
+        return object_dict
 
     def add_claim(self,id: str, values: list[str]):
         self.claims.append(Claim(Id=id,Values=values))
@@ -223,12 +218,13 @@ class preview_10_01_2021():
             return preview_10_01_2021.TokenIssuanceStartResponse(schema=response.get('schema'),body=response.get('body'),actions=[])
 
         def to_json(self):
-            object_dict={"schema":self.schema, 
-                         "body":self.body                        
-                        }
+            object_dict={}
             callback = _serialize_custom_object
-            object_dict["actions"]=json.dumps(self.actions,default=callback)
-            return json.dumps(object_dict)
+            temp=json.dumps(self.actions,default=callback)
+            object_dict['actions']=json.loads(temp)
+            object_dict['schema']=self.schema
+            object_dict['body']=self.body
+            return object_dict
                     
 
     class TokenIssuanceStartData(_abc.IAuthenticationEventData):
