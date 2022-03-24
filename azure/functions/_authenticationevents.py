@@ -54,7 +54,7 @@ class Claim():
 
     def to_json(self):
         object_dict={"id":self.id,
-                     "values":self.values
+                     "value":self.values
         }
         return object_dict
 
