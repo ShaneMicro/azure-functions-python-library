@@ -438,6 +438,15 @@ class IAuthenticationEventResponse(abc.ABC):
         self.schema = schema
         self.body = body
         self.jsonBody = json.loads(body)
+    pass
+class IAuthenticationEventResponse(abc.ABC):
+    def __init__(self,
+                 schema: typing.Optional[str],
+                 body: typing.Optional[str],
+                 jsonBody: typing.Optional[str]):
+        self.schema = schema
+        self.body = body
+        self.jsonBody = jsonBody
 
     def invalidate():
         pass
@@ -448,6 +457,14 @@ class IAuthenticationEventResponse(abc.ABC):
         response.Schema = schema
         response.Body = body
         return response
+
+
+class IAuthenticationEventActionable(abc.ABC):
+
+    abc.abstractmethod
+
+    def invalidate_actions():
+        pass
 
 
 class IAuthenticationEventAction(abc.ABC):
@@ -477,6 +494,14 @@ class IAuthenticationEventData(abc.ABC):
                  etype: typing.Optional[str],
                  customExtensionId: typing.Optional[str]):
         self.type = etype
+class IAuthenticationEventData(abc.ABC):
+    def __init__(self,
+                 eventListenerId: str,
+                 time: str,
+                 apiSchemaVersion: str,
+                 type: str,
+                 customExtensionId: str):
+        self.type = type
         self.apiSchemaVersion = apiSchemaVersion
         self.time = time
         self.eventListenerId = eventListenerId

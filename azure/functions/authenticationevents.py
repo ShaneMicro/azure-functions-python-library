@@ -1,5 +1,3 @@
-from abc import ABC, abstractmethod
-from http import client
 from importlib import import_module
 import json
 from logging import exception
@@ -16,9 +14,9 @@ from . import meta
 
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(meta.InConverter,
-                               meta.OutConverter,
-                               binding='authenticationEventTrigger',
-                               trigger=True):
+                                          meta.OutConverter,
+                                          binding='authenticationEventTrigger',
+                                          trigger=True):
     @classmethod
     def check_input_type_annotation(cls, pytype):
         # Activity Trigger's arguments should accept any types
@@ -78,5 +76,3 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     @classmethod
     def has_implicit_output(cls) -> bool:
         return True
-
-
