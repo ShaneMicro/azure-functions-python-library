@@ -39,7 +39,7 @@ class ProvideClaimsForToken(ITokenIssuanceAction, _abc.Serializable):
     def to_dict(self):
         return {
             "actionType": self.actionType,
-            "claims": dict(map(lambda c: c.to_dict(), self.claims))
+            "claims": list(map(lambda c: c.to_dict(), self.claims))
         }
 
     def to_json(self):
@@ -202,7 +202,7 @@ class preview_10_01_2021():
 
         def to_dict(self):
             return {
-                "actions": dict(map(lambda a:a.to_dict(),self.actions)),
+                "actions": list(map(lambda a:a.to_dict(),self.actions)),
                 "schema": self.schema,
                 "body":self.body
             }
