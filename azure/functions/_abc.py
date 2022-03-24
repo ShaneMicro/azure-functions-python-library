@@ -461,8 +461,6 @@ class IAuthenticationEventAction(abc.ABC):
 
 
 action_type = typing.TypeVar("action_type", bound=IAuthenticationEventAction)
-
-
 class IAuthenticationEventIActionableResponse(IAuthenticationEventResponse, typing.Generic[action_type]):
     def __init__(self,
                  schema: str,
@@ -512,7 +510,14 @@ class IAuthenticationEventRequest(abc.ABC, typing.Generic[response_type, payload
         self.payload = payload
         self.name = name
 
-    abc.abstractmethod
-
+    @abc.abstractmethod
     def create_instance(result: dict):
+        pass
+
+class Serializable(abc.ABC):
+    @abc.abstractmethod
+    def to_dict(self)->dict:
+        pass
+    @abc.abstractmethod
+    def to_json(self)->str:
         pass

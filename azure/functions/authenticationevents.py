@@ -7,10 +7,6 @@ from re import T
 from this import d 
 import azure.functions._abc as _abc
 import azure.functions._authenticationevents as _authenticationevents
-
-
-
-
 import typing
 import urllib
 from enum import Enum, auto
@@ -18,83 +14,6 @@ import uuid
 
 from . import meta
 
-#Utilities
-def _serialize_custom_object(obj):
-    """Serialize a user-defined object to JSON.
-
-    This function gets called when `json.dumps` cannot serialize
-    an object and returns a serializable dictionary containing enough
-    metadata to recontrust the original object.
-
-    Parameters
-    ----------
-    obj: Object
-        The object to serialize
-
-    Returns
-    -------
-    dict_obj: A serializable dictionary with enough metadata to reconstruct
-              `obj`
-
-    Exceptions
-    ----------
-    TypeError:
-        Raise if `obj` does not contain a `to_json` attribute
-    """
-    # 'safety' guard: raise error if object does not
-    # support serialization
-    if not hasattr(obj, "to_json"):
-        raise TypeError(f"class {type(obj)} does not expose a `to_json` "
-                        "function")
-    # Encode to json using the object's `to_json`
-    obj_type = type(obj)
-    return  obj_type.to_json(obj)
-    
- 
-
-def _deserialize_custom_object(obj: dict) -> object:
-    """Deserialize a user-defined object from JSON.
-
-    Deserializes a dictionary encoding a custom object,
-    if it contains class metadata suggesting that it should be
-    decoded further.
-
-    Parameters:
-    ----------
-    obj: dict
-        Dictionary object that potentially encodes a custom class
-
-    Returns:
-    --------
-    object
-        Either the original `obj` dictionary or the custom object it encoded
-
-    Exceptions
-    ----------
-    TypeError
-        If the decoded object does not contain a `from_json` function
-
-        testing
-    """
-    if ("__class__" in obj) and ("__module__" in obj) and ("__data__" in obj):
-        class_name = obj.pop("__class__")
-        module_name = obj.pop("__module__")
-        obj_data = obj.pop("__data__")
-
-        # Importing the class
-        module = import_module(module_name)
-        class_ = getattr(module, class_name)
-
-        if not hasattr(class_, "from_json"):
-            raise TypeError(f"class {type(obj)} does not expose a `from_json` "
-                            "function")
-
-        # Initialize the object using its `from_json` deserializer
-        obj = class_.from_json(obj_data)
-    return obj
-
-
- 
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(meta.InConverter,
                                meta.OutConverter,
@@ -144,15 +63,15 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
         try:
-            callback = _serialize_custom_object
-            obj_type = type(obj)
-            result = obj_type.to_json(obj)
-            final= json.dumps(result)
+            if not isinstance(obj,_abc.Serializable):
+                raise ValueError('Object was not of expected type Serializable')
+            result = obj.to_json()
+           
         except TypeError:
             raise ValueError(
                 f'authentication event trigger output must be json serializable ({obj})')
 
-        return meta.Datum(type='json', value=final)
+        return meta.Datum(type='json', value=result)
 
     @classmethod
     def has_implicit_output(cls) -> bool:
