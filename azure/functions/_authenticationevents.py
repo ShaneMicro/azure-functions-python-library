@@ -1,9 +1,6 @@
-from abc import ABC, abstractmethod
-from cProfile import label
 import json
 import typing
 import azure.functions._abc as _abc
-from xmlrpc.client import DateTime
 import uuid
 
 
@@ -48,11 +45,6 @@ class ProvideClaimsForToken(ITokenIssuanceAction, _abc.Serializable):
     def add_claim(self, id: str, values: list[str]):
         self.claims.append(Claim(Id=id, Values=values))
 
-    def build_action_body(self):
-        temp: dict
-        for item in self.claims:
-            temp[item.Id] = item.Values
-        return json.dumps(temp)
 
 
 class AuthProtocol():
