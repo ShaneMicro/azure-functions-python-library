@@ -442,11 +442,10 @@ class IAuthenticationEventResponse(abc.ABC):
 class IAuthenticationEventResponse(abc.ABC):
     def __init__(self,
                  schema: typing.Optional[str],
-                 body: typing.Optional[str],
-                 jsonBody: typing.Optional[str]):
+                 body: typing.Optional[str]):
         self.schema = schema
         self.body = body
-        self.jsonBody = jsonBody
+        self.jsonBody = json.loads(body)
 
     def invalidate():
         pass
@@ -472,9 +471,7 @@ class IAuthenticationEventAction(abc.ABC):
                  actionType: str):
         self.actionType = actionType
 
-    @abc.abstractmethod
-    def build_action_body():
-        pass
+
 
 
 action_type = typing.TypeVar("action_type", bound=IAuthenticationEventAction)
@@ -486,26 +483,20 @@ class IAuthenticationEventIActionableResponse(IAuthenticationEventResponse, typi
         super().__init__(schema, body)
         self.actions = actions
        
+
+        
 class IAuthenticationEventData(abc.ABC):
     def __init__(self,
-                 eventListenerId: typing.Optional[str],
-                 time: typing.Optional[str],
-                 apiSchemaVersion: typing.Optional[str],
-                 etype: typing.Optional[str],
-                 customExtensionId: typing.Optional[str]):
-        self.type = etype
-class IAuthenticationEventData(abc.ABC):
-    def __init__(self,
-                 eventListenerId: str,
-                 time: str,
-                 apiSchemaVersion: str,
-                 type: str,
-                 customExtensionId: str):
-        self.type = type
-        self.apiSchemaVersion = apiSchemaVersion
-        self.time = time
-        self.eventListenerId = eventListenerId
-        self.customExtensionId = customExtensionId
+                    eventListenerId: str,
+                    time: str,
+                    apiSchemaVersion: str,
+                    eventType: str,
+                    customExtensionId: str):
+            self.type = eventType
+            self.apiSchemaVersion = apiSchemaVersion
+            self.time = time
+            self.eventListenerId = eventListenerId
+            self.customExtensionId = customExtensionId       
 
     @classmethod
     def from_json(json: str):
