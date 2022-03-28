@@ -6,9 +6,7 @@ from this import d
 import azure.functions._abc as _abc
 import azure.functions._authenticationevents as _authenticationevents
 import typing
-import urllib
-from enum import Enum, auto
-import uuid
+
 
 from . import meta
 
@@ -40,8 +38,15 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
             try:
                 # callback = _deserialize_custom_object
                 response = json.loads(data.value)
-                if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension' and response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
-                    return _authenticationevents.preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+
+                if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension':
+                    if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+                        return _authenticationevents.preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+                    else:
+                        raise ValueError('Version not supported')
+                else:
+                    raise ValueError('Event type not supported')
+
             
                 # test=IEventRequest.populate(result=result)
             except json.JSONDecodeError:

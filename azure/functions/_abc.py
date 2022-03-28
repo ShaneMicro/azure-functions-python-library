@@ -3,7 +3,7 @@
 
 import abc
 import datetime
-from enum import auto, Enum
+from enum import Enum
 import io
 import json
 from logging import exception

@@ -1,5 +1,4 @@
 import json
-import typing
 import azure.functions._abc as _abc
 import uuid
 
@@ -183,8 +182,8 @@ class Context():
 class preview_10_01_2021():
     class TokenIssuanceStartResponse(_abc.IAuthenticationEventIActionableResponse[ITokenIssuanceAction],_abc.Serializable):
         def __init__(self,
-                     schema: typing.Optional[str],
-                     body: typing.Optional[str],
+                     schema: str,
+                     body: str,
                      actions: list[ITokenIssuanceAction]):
 
             super().__init__(schema=schema, body=body, actions=actions)
@@ -207,11 +206,11 @@ class preview_10_01_2021():
                      eventListenerId: str,
                      time: str,
                      apiSchemaVersion: str,
-                     etype: str,
+                     eventType: str,
                      context: Context,
                      customExtensionId: str):
             self.context = context
-            super().__init__(eventListenerId=eventListenerId, time=time,eventType=etype,
+            super().__init__(eventListenerId=eventListenerId, time=time,eventType=eventType,
                              apiSchemaVersion=apiSchemaVersion, customExtensionId=customExtensionId)
 
         def create_instance(payload: dict):
