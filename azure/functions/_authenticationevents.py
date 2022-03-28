@@ -214,7 +214,7 @@ class preview_10_01_2021():
                              apiSchemaVersion=apiSchemaVersion, customExtensionId=customExtensionId)
 
         def create_instance(payload: dict):
-            return preview_10_01_2021.TokenIssuanceStartData(eventListenerId=payload.get('eventListenerId'), time=payload.get('time'), etype=payload.get('type'), apiSchemaVersion=payload.get('apiSchemaVersion'), context=Context.populate(payload.get('context')), customExtensionId=payload.get('customExtensionId'))
+            return preview_10_01_2021.TokenIssuanceStartData(eventListenerId=payload.get('eventListenerId'), time=payload.get('time'), eventType=payload.get('type'), apiSchemaVersion=payload.get('apiSchemaVersion'), context=Context.populate(payload.get('context')), customExtensionId=payload.get('customExtensionId'))
 
     class TokenIssuanceStartRequest(_abc.IAuthenticationEventRequest[TokenIssuanceStartResponse, TokenIssuanceStartData]):
         def __init__(self,
