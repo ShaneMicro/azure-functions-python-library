@@ -441,8 +441,8 @@ class IAuthenticationEventResponse(abc.ABC):
     pass
 class IAuthenticationEventResponse(abc.ABC):
     def __init__(self,
-                 schema: typing.Optional[str],
-                 body: typing.Optional[str]):
+                 schema: str,
+                 body: str):
         self.schema = schema
         self.body = body
         self.jsonBody = json.loads(body)
@@ -518,13 +518,12 @@ class IAuthenticationEventRequest(abc.ABC, typing.Generic[response_type, payload
                  statusMessage: str,
                  requestStatus: AuthenticationEventRequestStatus,
                  response: response_type,
-                 payload: payload_type,
-                 name: str):
+                 payload: payload_type):
         self.statusMessage = statusMessage
         self.requestStatus = requestStatus
         self.response = response
         self.payload = payload
-        self.name = name
+        
 
     @abc.abstractmethod
     def create_instance(result: dict):

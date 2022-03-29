@@ -224,7 +224,7 @@ class preview_10_01_2021():
                      payload: _abc.payload_type,
                      tokenClaims: dict[str, str]):
 
-            super().__init__(statusMessage=statusMessage, requestStatus=requestStatus,response=response,payload=payload,name="karan")
+            super().__init__(statusMessage=statusMessage, requestStatus=requestStatus,response=response,payload=payload)
             self.tokenClaims = tokenClaims
 
         def create_instance(result: dict):
