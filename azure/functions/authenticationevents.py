@@ -3,9 +3,9 @@ import json
 from logging import exception
 from re import T
 from this import d 
-import azure.functions._abc as _abc
-import azure.functions._authenticationevents as _authenticationevents
 import typing
+import azure.functions.authentication_events.TokenIssuanceStart._authenticationevents as _authenticationevents
+import azure.functions.authentication_events.common as _abc
 
 
 from . import meta

@@ -1,5 +1,5 @@
 import json
-import azure.functions._abc as _abc
+import azure.functions.authentication_events.common as _abc
 import uuid
 
 
