@@ -6,20 +6,10 @@ from logging import exception
 import typing
 
 
-class AuthenticationEventRequestStatus(Enum):
+class RequestStatus(Enum):
     Failed = 'Failed'
     TokenInvalid = 'TokenInvalid'
     Successful = 'Successful'
-
-
-class _IAuthenticationEventResponse(abc.ABC):
-    def __init__(self,
-                 schema: str,
-                 body: str):
-        self.schema = schema
-        self.body = body
-        self.jsonBody = json.loads(body)
-    pass
 
 
 class _IAuthenticationEventResponse(abc.ABC):
@@ -40,29 +30,19 @@ class _IAuthenticationEventResponse(abc.ABC):
         response.Body = body
         return response
 
-
-class _IAuthenticationEventActionable(abc.ABC):
-
-    abc.abstractmethod
-
-    def invalidate_actions():
-        pass
-
-
 class _IAuthenticationEventAction(abc.ABC):
     def __init__(self,
                  actionType: str):
         self.actionType = actionType
 
 
-_action_type = typing.TypeVar("_action_type", bound=_IAuthenticationEventAction)
+action_type = typing.TypeVar("action_type", bound=_IAuthenticationEventAction)
 
-
-class _IAuthenticationEventIActionableResponse(_IAuthenticationEventResponse, typing.Generic[_action_type]):
+class _IAuthenticationEventIActionableResponse(_IAuthenticationEventResponse, typing.Generic[action_type]):
     def __init__(self,
                  schema: str,
                  body: str,
-                 actions: list[_action_type]):
+                 actions: list[action_type]):
         super().__init__(schema, body)
         self.actions = actions
 
@@ -91,17 +71,17 @@ class _IAuthenticationEventData(abc.ABC):
         return data if not json else data.from_json(json)
 
 
-_response_type = typing.TypeVar(
-    "_response_type", bound=_IAuthenticationEventResponse)
-_payload_type = typing.TypeVar("_payload_type", bound=_IAuthenticationEventData)
+response_type = typing.TypeVar(
+    "response_type", bound=_IAuthenticationEventResponse)
+payload_type = typing.TypeVar("payload_type", bound=_IAuthenticationEventData)
 
 
-class _IAuthenticationEventRequest(abc.ABC, typing.Generic[_response_type, _payload_type]):
+class _IAuthenticationEventRequest(abc.ABC, typing.Generic[response_type, payload_type]):
     def __init__(self,
                  statusMessage: str,
-                 requestStatus: AuthenticationEventRequestStatus,
-                 response: _response_type,
-                 payload: _payload_type):
+                 requestStatus: RequestStatus,
+                 response: response_type,
+                 payload: payload_type):
         self.statusMessage = statusMessage
         self.requestStatus = requestStatus
         self.response = response

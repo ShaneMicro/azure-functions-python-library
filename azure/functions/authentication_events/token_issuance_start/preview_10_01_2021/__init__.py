@@ -1,15 +1,16 @@
 import json
 
-from .data import Context
-from ...token_issuance_start import _ITokenIssuanceAction
-from ....authentication_events import _IAuthenticationEventIActionableResponse, _Serializable, _IAuthenticationEventData, _IAuthenticationEventRequest, AuthenticationEventRequestStatus, _response_type, _payload_type
+from .data import *
+from ...token_issuance_start import ITokenIssuanceAction, Claim
+from ....authentication_events import (_IAuthenticationEventIActionableResponse, _Serializable, _IAuthenticationEventData,
+                                       _IAuthenticationEventRequest, RequestStatus, response_type, payload_type)
 
 
-class TokenIssuanceStartResponse(_IAuthenticationEventIActionableResponse[_ITokenIssuanceAction], _Serializable):
+class TokenIssuanceStartResponse(_IAuthenticationEventIActionableResponse[ITokenIssuanceAction], _Serializable):
     def __init__(self,
                  schema: str,
                  body: str,
-                 actions: list[_ITokenIssuanceAction]):
+                 actions: list[ITokenIssuanceAction]):
 
         super().__init__(schema=schema, body=body, actions=actions)
 
@@ -46,9 +47,9 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
 class TokenIssuanceStartRequest(_IAuthenticationEventRequest[TokenIssuanceStartResponse, TokenIssuanceStartData]):
     def __init__(self,
                  statusMessage: str,
-                 requestStatus: AuthenticationEventRequestStatus,
-                 response: _response_type,
-                 payload: _payload_type,
+                 requestStatus: RequestStatus,
+                 response: response_type,
+                 payload: payload_type,
                  tokenClaims: dict[str, str]):
 
         super().__init__(statusMessage=statusMessage,
@@ -61,4 +62,4 @@ class TokenIssuanceStartRequest(_IAuthenticationEventRequest[TokenIssuanceStartR
         data = TokenIssuanceStartData.create_instance(
             payload=result.get('payload'))
         tokenclaims = result.get('tokenClaims')
-        return TokenIssuanceStartRequest(statusMessage=result.get("statusMessage"), requestStatus=AuthenticationEventRequestStatus(result.get("requestStatus")), response=response, payload=data, tokenClaims=tokenclaims)
+        return TokenIssuanceStartRequest(statusMessage=result.get("statusMessage"), requestStatus=RequestStatus(result.get("requestStatus")), response=response, payload=data, tokenClaims=tokenclaims)

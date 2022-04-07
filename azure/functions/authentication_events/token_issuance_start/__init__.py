@@ -3,11 +3,10 @@ from ...authentication_events import _IAuthenticationEventAction, _Serializable
 import json
 
 
-class _ITokenIssuanceAction(_IAuthenticationEventAction):
+class ITokenIssuanceAction(_IAuthenticationEventAction):
     def __init__(self,
                  actionType):
         self.actionType = actionType
-
 
 class Claim(_Serializable):
     def __init__(self,
