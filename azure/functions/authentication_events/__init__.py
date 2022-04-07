@@ -6,7 +6,7 @@ from logging import exception
 import typing
 
 
-class RequestStatus(Enum):
+class AuthenticationEventRequestStatus(Enum):
     Failed = 'Failed'
     TokenInvalid = 'TokenInvalid'
     Successful = 'Successful'
@@ -99,7 +99,7 @@ _payload_type = typing.TypeVar("_payload_type", bound=_IAuthenticationEventData)
 class _IAuthenticationEventRequest(abc.ABC, typing.Generic[_response_type, _payload_type]):
     def __init__(self,
                  statusMessage: str,
-                 requestStatus: RequestStatus,
+                 requestStatus: AuthenticationEventRequestStatus,
                  response: _response_type,
                  payload: _payload_type):
         self.statusMessage = statusMessage

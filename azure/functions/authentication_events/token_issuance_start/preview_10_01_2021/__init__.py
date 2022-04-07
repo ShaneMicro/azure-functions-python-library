@@ -61,4 +61,4 @@ class TokenIssuanceStartRequest(_IAuthenticationEventRequest[TokenIssuanceStartR
         data = TokenIssuanceStartData.create_instance(
             payload=result.get('payload'))
         tokenclaims = result.get('tokenClaims')
-        return TokenIssuanceStartRequest(statusMessage=result.get("statusMessage"), requestStatus=_abc.AuthenticationEventRequestStatus(result.get("requestStatus")), response=response, payload=data, tokenClaims=tokenclaims)
+        return TokenIssuanceStartRequest(statusMessage=result.get("statusMessage"), requestStatus=AuthenticationEventRequestStatus(result.get("requestStatus")), response=response, payload=data, tokenClaims=tokenclaims)

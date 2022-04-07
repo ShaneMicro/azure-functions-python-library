@@ -4,8 +4,8 @@ from logging import exception
 from re import T
 from this import d 
 import typing
-import azure.functions.authentication_events.TokenIssuanceStart._authenticationevents as _authenticationevents
-import azure.functions.authentication_events.common as _abc
+import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 as preview_10_01_2021
+import azure.functions.authentication_events as _abc
 
 
 from . import meta
@@ -41,7 +41,7 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
 
                 if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension':
                     if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
-                        return _authenticationevents.preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+                        return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
                     else:
                         raise ValueError('Version not supported')
                 else:
@@ -66,9 +66,9 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
         try:
-            if not isinstance(obj,_abc.IAuthenticationEventResponse):
+            if not isinstance(obj,_abc._IAuthenticationEventResponse):
                 raise ValueError('Object should be of valid response type')
-            if not isinstance(obj,_abc.Serializable):
+            if not isinstance(obj,_abc._Serializable):
                 raise ValueError('Object was not of expected type Serializable')
             result = obj.to_json()
            

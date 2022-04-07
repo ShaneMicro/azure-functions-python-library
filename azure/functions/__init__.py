@@ -17,11 +17,6 @@ from .kafka import KafkaEvent, KafkaConverter, KafkaTriggerConverter
 from .meta import get_binding_registry
 from ._queue import QueueMessage
 from ._servicebus import ServiceBusMessage
-from ._durable_functions import OrchestrationContext, EntityContext
-from .meta import get_binding_registry
-from .extension import (ExtensionMeta, FunctionExtensionException,
-                        FuncExtensionBase, AppExtensionBase)
-from .authenticationevents import AuthenticationEventTriggerConverter
 
 # Import binding implementations to register them
 from . import blob  # NoQA
@@ -34,7 +29,7 @@ from . import queue  # NoQA
 from . import servicebus  # NoQA
 from . import timer  # NoQA
 from . import durable_functions  # NoQA
-from . import authenticationevents #NoQA
+
 
 __all__ = (
     # Functions
@@ -45,7 +40,6 @@ __all__ = (
     'Out',
 
     # Binding rich types, sorted alphabetically.
-    'AuthenticationEventTriggerConverter',
     'Document',
     'DocumentList',
     'EventGridEvent',
