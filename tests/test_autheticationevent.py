@@ -7,7 +7,7 @@ from azure.functions.meta import Datum
 import azure.functions.authentication_events as _abc
 from .resource import AuthenticationEventsResources
 
-class TestDurableFunctions(unittest.TestCase):
+class TestAuthenticationEvents(unittest.TestCase):
     
     def test_object_creation_payload(self):
         
