@@ -39,23 +39,24 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                 # callback = _deserialize_custom_object
                 response = json.loads(data.value)
 
-                if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension':
-                    if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
-                        return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+                if "payload" in response:
+                    if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension':
+                        if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+                            try:
+                                return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+                            except Exception:
+                                raise ValueError('authentication event trigger input must be a string or a 'f'valid json serializable ({data.value})')
+                        else:
+                            raise ValueError('Version not supported')
                     else:
-                        raise ValueError('Version not supported')
+                        raise ValueError('Event type not supported')
                 else:
-                    raise ValueError('Event type not supported')
+                    raise ValueError('request data does not contain payload')
 
             
-                # test=IEventRequest.populate(result=result)
+                
             except json.JSONDecodeError:
-                # String failover if the content is not json serializable
-                result = data.value
-            except Exception:
-                raise ValueError(
-                    'authentication event trigger input must be a string or a '
-                    f'valid json serializable ({data.value})')
+                result = data.value  
         else:
             raise NotImplementedError(
                 f'unsupported authentication event trigger payload type: {data_type}')
@@ -65,13 +66,14 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     @classmethod
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
+        
+        if not isinstance(obj,_abc._IAuthenticationEventResponse):
+            raise ValueError('Object should be of valid response type')
+        if not isinstance(obj,_abc._Serializable):
+            raise ValueError('Object was not of expected type Serializable')
+       
         try:
-            if not isinstance(obj,_abc._IAuthenticationEventResponse):
-                raise ValueError('Object should be of valid response type')
-            if not isinstance(obj,_abc._Serializable):
-                raise ValueError('Object was not of expected type Serializable')
             result = obj.to_json()
-           
         except TypeError:
             raise ValueError(
                 f'authentication event trigger output must be json serializable ({obj})')
