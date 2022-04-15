@@ -3,9 +3,7 @@
 
 import abc
 import datetime
-from enum import auto, Enum
 import io
-from logging import exception
 import typing
 
 
@@ -422,86 +420,4 @@ class OrchestrationContext(abc.ABC):
     @property
     @abc.abstractmethod
     def body(self) -> str:
-        pass
-
-
-class AuthenticationEventRequestStatus(Enum):
-    pass
-class IAuthenticationEventResponse(abc.ABC):
-    def __init__(self,
-                 schema: typing.Optional[str],
-                 body: typing.Optional[str],
-                 jsonBody: typing.Optional[str]):
-        self.schema = schema
-        self.body = body
-        self.jsonBody = jsonBody
-
-    def invalidate():
-        pass
-
-    @staticmethod
-    def create_instance(type: type, schema: str, body: str):
-        response = IAuthenticationEventResponse(type())
-        response.Schema = schema
-        response.Body = body
-        return response
-
-
-class IAuthenticationEventActionable(abc.ABC):
-
-    abc.abstractmethod
-
-    def invalidate_actions():
-        pass
-
-
-class IAuthenticationEventAction(abc.ABC):
-    def __init__(self,
-                 actionType: str):
-        self.actionType = actionType
-
-    abc.abstractmethod
-
-    def build_action_body():
-        pass
-
-
-class IAuthenticationEventData(abc.ABC):
-    def __init__(self,
-                 eventListenerId: str,
-                 time: str,
-                 apiSchemaVersion: str,
-                 type: str,
-                 customExtensionId: str):
-        self.type = type
-        self.apiSchemaVersion = apiSchemaVersion
-        self.time = time
-        self.eventListenerId = eventListenerId
-        self.customExtensionId = customExtensionId
-
-    @classmethod
-    def from_json(json: str):
-        jsonString = json.loads(json)
-        return IAuthenticationEventData(**jsonString)
-
-    @staticmethod
-    def create_instance(Type, json: str):
-        data = IAuthenticationEventData(Type())
-        return data if not json else data.from_json(json)
-
-
-class IAuthenticationEventRequest(abc.ABC):
-    def __init__(self,
-                 statusMessage: str,
-                 requestStatus: AuthenticationEventRequestStatus,
-                 response: IAuthenticationEventResponse,
-                 payload: IAuthenticationEventData):
-        self.statusMessage = statusMessage
-        self.requestStatus = requestStatus
-        self.response = response
-        self.payload = payload
-
-    abc.abstractmethod
-
-    def create_instance(result: dict):
         pass
