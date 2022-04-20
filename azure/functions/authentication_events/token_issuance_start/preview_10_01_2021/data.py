@@ -1,5 +1,5 @@
 import uuid
-
+from typing import List
 
 class AuthProtocol():
     def __init__(self,
@@ -37,7 +37,7 @@ class ServicePrincipalName():
         self.uuid = uuid
 
 
-listOfServicePrincipalName = list[ServicePrincipalName]
+listOfServicePrincipalName = List[ServicePrincipalName]
 
 
 class ServicePrincipal():
@@ -46,7 +46,7 @@ class ServicePrincipal():
                  appId: str,
                  appDisplayName: str,
                  displayName: str,
-                 servicePrincipalNames: list[str]):
+                 servicePrincipalNames: List[str]):
         self.id = id
         self.appId = appId
         self.appDisplayName = appDisplayName
