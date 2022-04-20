@@ -1,6 +1,7 @@
 
 from ...authentication_events import _IAuthenticationEventAction, _Serializable
 import json
+from typing import List
 
 
 class ITokenIssuanceAction(_IAuthenticationEventAction):
@@ -11,7 +12,7 @@ class ITokenIssuanceAction(_IAuthenticationEventAction):
 class Claim(_Serializable):
     def __init__(self,
                  id: str,
-                 values: list[str]):
+                 values: List[str]):
         self.id = id
         self.values = values
 
