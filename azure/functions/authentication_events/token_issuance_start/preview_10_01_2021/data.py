@@ -102,7 +102,7 @@ class User():
         return User(**user)
 
 
-Roles = list[Role]
+Roles = List[Role]
 
 
 class Context():
