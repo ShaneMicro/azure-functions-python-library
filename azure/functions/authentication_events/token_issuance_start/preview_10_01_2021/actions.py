@@ -2,11 +2,12 @@
 import json
 from ...token_issuance_start import ITokenIssuanceAction, Claim
 from ....authentication_events import _Serializable
+from typing import List
 
 
 class ProvideClaimsForToken(ITokenIssuanceAction, _Serializable):
     def __init__(self,
-                 claims: list[Claim]):
+                 claims: List[Claim]):
         self.actionType = "ProvideClaimsForToken"
         self.claims = claims
 

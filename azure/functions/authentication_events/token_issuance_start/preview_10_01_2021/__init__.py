@@ -4,13 +4,13 @@ from .data import *
 from ...token_issuance_start import ITokenIssuanceAction, Claim
 from ....authentication_events import (_IAuthenticationEventIActionableResponse, _Serializable, _IAuthenticationEventData,
                                        _IAuthenticationEventRequest, RequestStatus, response_type, payload_type)
-
+from typing import List, Dict
 
 class TokenIssuanceStartResponse(_IAuthenticationEventIActionableResponse[ITokenIssuanceAction], _Serializable):
     def __init__(self,
                  schema: str,
                  body: str,
-                 actions: list[ITokenIssuanceAction]):
+                 actions: List[ITokenIssuanceAction]):
 
         super().__init__(schema=schema, body=body, actions=actions)
 
@@ -50,7 +50,7 @@ class TokenIssuanceStartRequest(_IAuthenticationEventRequest[TokenIssuanceStartR
                  requestStatus: RequestStatus,
                  response: response_type,
                  payload: payload_type,
-                 tokenClaims: dict[str, str]):
+                 tokenClaims: Dict[str, str]):
 
         super().__init__(statusMessage=statusMessage,
                          requestStatus=requestStatus, response=response, payload=payload)
