@@ -5,6 +5,8 @@ import json
 from logging import exception
 import typing
 
+from typing import List
+
 
 class RequestStatus(Enum):
     Failed = 'Failed'
@@ -42,7 +44,7 @@ class _IAuthenticationEventIActionableResponse(_IAuthenticationEventResponse, ty
     def __init__(self,
                  schema: str,
                  body: str,
-                 actions: list[action_type]):
+                 actions: List[action_type]):
         super().__init__(schema, body)
         self.actions = actions
 
