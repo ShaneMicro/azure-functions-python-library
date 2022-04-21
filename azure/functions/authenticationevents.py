@@ -1,7 +1,6 @@
 import json
 import typing
-import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 \
-    as preview_10_01_2021
+import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 as preview_10_01_2021  # noqa: E501
 import azure.functions.authentication_events as _abc
 from . import meta
 
@@ -46,9 +45,9 @@ class AuthenticationEventTriggerConverter(
                         ):
                             try:
                                 return preview_10_01_2021 \
-                                .TokenIssuanceStartRequest.create_instance(
-                                    result=response
-                                )
+                                    .TokenIssuanceStartRequest.create_instance(
+                                        result=response
+                                    )
                             except Exception:
                                 raise ValueError(
                                     "authentication event trigger \

@@ -1,7 +1,6 @@
 import abc
 from enum import Enum
 import json
-from logging import exception
 import typing
 
 from typing import List
@@ -72,7 +71,7 @@ class _IAuthenticationEventData(abc.ABC):
         return data if not json else data.from_json(json)
 
 
-response_type = typing.TypeVar("response_type", bound=_IAuthenticationEventResponse)
+response_type = typing.TypeVar("response_type", bound=_IAuthenticationEventResponse)  # noqa: E501
 payload_type = typing.TypeVar("payload_type", bound=_IAuthenticationEventData)
 
 

@@ -1,7 +1,7 @@
 import json
 
-from .data import *
-from ...token_issuance_start import ITokenIssuanceAction, Claim
+from .data import Context
+from ...token_issuance_start import ITokenIssuanceAction
 from ....authentication_events import (
     _IAuthenticationEventIActionableResponse,
     _Serializable,
@@ -15,15 +15,22 @@ from typing import List, Dict
 
 
 class TokenIssuanceStartResponse(
-    _IAuthenticationEventIActionableResponse[ITokenIssuanceAction], _Serializable
+    _IAuthenticationEventIActionableResponse[ITokenIssuanceAction],
+    _Serializable
 ):
-    def __init__(self, schema: str, body: str, actions: List[ITokenIssuanceAction]):
-
+    def __init__(
+        self,
+        schema: str,
+        body: str,
+        actions: List[ITokenIssuanceAction]
+    ):
         super().__init__(schema=schema, body=body, actions=actions)
 
     def create_instance(response: dict):
         return TokenIssuanceStartResponse(
-            schema=response.get("schema"), body=response.get("body"), actions=[]
+            schema=response.get("schema"),
+            body=response.get("body"),
+            actions=[]
         )
 
     def to_dict(self):
@@ -68,7 +75,9 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
 
 
 class TokenIssuanceStartRequest(
-    _IAuthenticationEventRequest[TokenIssuanceStartResponse, TokenIssuanceStartData]
+    _IAuthenticationEventRequest[
+        TokenIssuanceStartResponse,
+        TokenIssuanceStartData]
 ):
     def __init__(
         self,
@@ -91,7 +100,7 @@ class TokenIssuanceStartRequest(
         response = TokenIssuanceStartResponse.create_instance(
             response=result.get("response")
         )
-        data = TokenIssuanceStartData.create_instance(payload=result.get("payload"))
+        data = TokenIssuanceStartData.create_instance(payload=result.get("payload"))  # noqa: E501
         tokenclaims = result.get("tokenClaims")
         return TokenIssuanceStartRequest(
             statusMessage=result.get("statusMessage"),
