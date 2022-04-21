@@ -1,4 +1,3 @@
-
 import abc
 from enum import Enum
 import json
@@ -9,15 +8,13 @@ from typing import List
 
 
 class RequestStatus(Enum):
-    Failed = 'Failed'
-    TokenInvalid = 'TokenInvalid'
-    Successful = 'Successful'
+    Failed = "Failed"
+    TokenInvalid = "TokenInvalid"
+    Successful = "Successful"
 
 
 class _IAuthenticationEventResponse(abc.ABC):
-    def __init__(self,
-                 schema: str,
-                 body: str):
+    def __init__(self, schema: str, body: str):
         self.schema = schema
         self.body = body
         self.jsonBody = json.loads(body)
@@ -32,30 +29,32 @@ class _IAuthenticationEventResponse(abc.ABC):
         response.Body = body
         return response
 
+
 class _IAuthenticationEventAction(abc.ABC):
-    def __init__(self,
-                 actionType: str):
+    def __init__(self, actionType: str):
         self.actionType = actionType
 
 
 action_type = typing.TypeVar("action_type", bound=_IAuthenticationEventAction)
 
-class _IAuthenticationEventIActionableResponse(_IAuthenticationEventResponse, typing.Generic[action_type]):
-    def __init__(self,
-                 schema: str,
-                 body: str,
-                 actions: List[action_type]):
+
+class _IAuthenticationEventIActionableResponse(
+    _IAuthenticationEventResponse, typing.Generic[action_type]
+):
+    def __init__(self, schema: str, body: str, actions: List[action_type]):
         super().__init__(schema, body)
         self.actions = actions
 
 
 class _IAuthenticationEventData(abc.ABC):
-    def __init__(self,
-                 eventListenerId: str,
-                 time: str,
-                 apiSchemaVersion: str,
-                 eventType: str,
-                 customExtensionId: str):
+    def __init__(
+        self,
+        eventListenerId: str,
+        time: str,
+        apiSchemaVersion: str,
+        eventType: str,
+        customExtensionId: str,
+    ):
         self.type = eventType
         self.apiSchemaVersion = apiSchemaVersion
         self.time = time
@@ -73,17 +72,20 @@ class _IAuthenticationEventData(abc.ABC):
         return data if not json else data.from_json(json)
 
 
-response_type = typing.TypeVar(
-    "response_type", bound=_IAuthenticationEventResponse)
+response_type = typing.TypeVar("response_type", bound=_IAuthenticationEventResponse)
 payload_type = typing.TypeVar("payload_type", bound=_IAuthenticationEventData)
 
 
-class _IAuthenticationEventRequest(abc.ABC, typing.Generic[response_type, payload_type]):
-    def __init__(self,
-                 statusMessage: str,
-                 requestStatus: RequestStatus,
-                 response: response_type,
-                 payload: payload_type):
+class _IAuthenticationEventRequest(
+    abc.ABC, typing.Generic[response_type, payload_type]
+):
+    def __init__(
+        self,
+        statusMessage: str,
+        requestStatus: RequestStatus,
+        response: response_type,
+        payload: payload_type,
+    ):
         self.statusMessage = statusMessage
         self.requestStatus = requestStatus
         self.response = response

@@ -1,10 +1,9 @@
 import uuid
 from typing import List
 
-class AuthProtocol():
-    def __init__(self,
-                 type: str,
-                 tenantId: str):
+
+class AuthProtocol:
+    def __init__(self, type: str, tenantId: str):
         self.type = type
         self.tenantId = tenantId
 
@@ -12,27 +11,22 @@ class AuthProtocol():
         return AuthProtocol(**authProtocol)
 
 
-class Client():
-    def __init__(self,
-                 ip: str):
+class Client:
+    def __init__(self, ip: str):
         self.ip = ip
 
     def populate(client: dict):
         return Client(**client)
 
 
-class Role():
-    def __init__(self,
-                 id: str,
-                 value: str):
+class Role:
+    def __init__(self, id: str, value: str):
         self.id = id
         self.value = value
 
 
-class ServicePrincipalName():
-    def __init__(self,
-                 url: str,
-                 uuid: uuid):
+class ServicePrincipalName:
+    def __init__(self, url: str, uuid: uuid):
         self.url = url
         self.uuid = uuid
 
@@ -40,13 +34,15 @@ class ServicePrincipalName():
 listOfServicePrincipalName = List[ServicePrincipalName]
 
 
-class ServicePrincipal():
-    def __init__(self,
-                 id: str,
-                 appId: str,
-                 appDisplayName: str,
-                 displayName: str,
-                 servicePrincipalNames: List[str]):
+class ServicePrincipal:
+    def __init__(
+        self,
+        id: str,
+        appId: str,
+        appDisplayName: str,
+        displayName: str,
+        servicePrincipalNames: List[str],
+    ):
         self.id = id
         self.appId = appId
         self.appDisplayName = appDisplayName
@@ -57,27 +53,29 @@ class ServicePrincipal():
         return ServicePrincipal(**servicePrincipal)
 
 
-class User():
-    def __init__(self,
-                 ageGroup: str,
-                 companyName: str,
-                 country: str,
-                 createdDateTime: str,
-                 creationType: str,
-                 department: str,
-                 displayName: str,
-                 givenName: str,
-                 lastPasswordChangeDateTime: str,
-                 mail: str,
-                 onPremisesSamAccountName: str,
-                 onPremisesSecurityIdentifier: str,
-                 onPremiseUserPrincipalName: str,
-                 preferredDataLocation: str,
-                 preferredLanguage: str,
-                 surname: str,
-                 userPrincipalName: str,
-                 userType: str,
-                 id: str):
+class User:
+    def __init__(
+        self,
+        ageGroup: str,
+        companyName: str,
+        country: str,
+        createdDateTime: str,
+        creationType: str,
+        department: str,
+        displayName: str,
+        givenName: str,
+        lastPasswordChangeDateTime: str,
+        mail: str,
+        onPremisesSamAccountName: str,
+        onPremisesSecurityIdentifier: str,
+        onPremiseUserPrincipalName: str,
+        preferredDataLocation: str,
+        preferredLanguage: str,
+        surname: str,
+        userPrincipalName: str,
+        userType: str,
+        id: str,
+    ):
         self.id = id
         self.userType = userType
         self.userPrincipalName = userPrincipalName
@@ -105,15 +103,17 @@ class User():
 Roles = List[Role]
 
 
-class Context():
-    def __init__(self,
-                 correlationId: str,
-                 client: Client,
-                 authProtocol: AuthProtocol,
-                 clientServicePrincipal: ServicePrincipal,
-                 resourceServicePrincipal: ServicePrincipal,
-                 roles: Roles,
-                 user: User):
+class Context:
+    def __init__(
+        self,
+        correlationId: str,
+        client: Client,
+        authProtocol: AuthProtocol,
+        clientServicePrincipal: ServicePrincipal,
+        resourceServicePrincipal: ServicePrincipal,
+        roles: Roles,
+        user: User,
+    ):
         self.user = user
         self.roles = roles
         self.resourceServicePrincipal = resourceServicePrincipal
@@ -123,12 +123,16 @@ class Context():
         self.correlationId = correlationId
 
     def populate(context: dict):
-        return Context(correlationId=context.get('correlationId'),
-                       user=User.populate(context.get('user')),
-                       client=Client.populate(context.get('client')),
-                       clientServicePrincipal=ServicePrincipal.populate(
-                           context.get('clientServicePrincipal')),
-                       resourceServicePrincipal=ServicePrincipal.populate(
-                           context.get('resourceServicePrincipal')),
-                       roles=context.get('roles'),
-                       authProtocol=AuthProtocol.populate(context.get('authProtocol')))
+        return Context(
+            correlationId=context.get("correlationId"),
+            user=User.populate(context.get("user")),
+            client=Client.populate(context.get("client")),
+            clientServicePrincipal=ServicePrincipal.populate(
+                context.get("clientServicePrincipal")
+            ),
+            resourceServicePrincipal=ServicePrincipal.populate(
+                context.get("resourceServicePrincipal")
+            ),
+            roles=context.get("roles"),
+            authProtocol=AuthProtocol.populate(context.get("authProtocol")),
+        )

@@ -1,4 +1,3 @@
-
 import json
 from ...token_issuance_start import ITokenIssuanceAction, Claim
 from ....authentication_events import _Serializable
@@ -6,15 +5,14 @@ from typing import List
 
 
 class ProvideClaimsForToken(ITokenIssuanceAction, _Serializable):
-    def __init__(self,
-                 claims: List[Claim]):
+    def __init__(self, claims: List[Claim]):
         self.actionType = "ProvideClaimsForToken"
         self.claims = claims
 
     def to_dict(self):
         return {
             "actionType": self.actionType,
-            "claims": list(map(lambda c: c.to_dict(), self.claims))
+            "claims": list(map(lambda c: c.to_dict(), self.claims)),
         }
 
     def to_json(self):
