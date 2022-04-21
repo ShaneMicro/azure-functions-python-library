@@ -1,10 +1,10 @@
 import json
 import typing
-import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 as preview_10_01_2021
+import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 \
+    as preview_10_01_2021
 import azure.functions.authentication_events as _abc
-
-
 from . import meta
+
 
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(
@@ -45,12 +45,14 @@ class AuthenticationEventTriggerConverter(
                             == "10-01-2021-preview"
                         ):
                             try:
-                                return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(
+                                return preview_10_01_2021 \
+                                .TokenIssuanceStartRequest.create_instance(
                                     result=response
                                 )
                             except Exception:
                                 raise ValueError(
-                                    "authentication event trigger input must be a string or a "
+                                    "authentication event trigger \
+                                    input must be a string or a "
                                     f"valid json serializable ({data.value})"
                                 )
                         else:
@@ -61,10 +63,11 @@ class AuthenticationEventTriggerConverter(
                     raise ValueError("request data does not contain payload")
 
             except json.JSONDecodeError:
-                result = data.value
+                response = data.value
         else:
             raise NotImplementedError(
-                f"unsupported authentication event trigger payload type: {data_type}"
+                f"unsupported authentication event trigger payload type: \
+                {data_type}"
             )
 
         return response
@@ -83,7 +86,8 @@ class AuthenticationEventTriggerConverter(
             result = obj.to_json()
         except TypeError:
             raise ValueError(
-                f"authentication event trigger output must be json serializable ({obj})"
+                f"authentication event trigger output \
+                must be json serializable ({obj})"
             )
 
         return meta.Datum(type="json", value=result)
