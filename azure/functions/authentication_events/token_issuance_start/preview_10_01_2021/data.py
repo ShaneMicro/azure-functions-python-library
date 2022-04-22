@@ -1,4 +1,3 @@
-import uuid
 from typing import List
 
 
@@ -7,6 +6,7 @@ class AuthProtocol:
         self.type = type
         self.tenantId = tenantId
 
+    @staticmethod
     def populate(authProtocol: dict):
         return AuthProtocol(**authProtocol)
 
@@ -15,6 +15,7 @@ class Client:
     def __init__(self, ip: str):
         self.ip = ip
 
+    @staticmethod
     def populate(client: dict):
         return Client(**client)
 
@@ -26,7 +27,7 @@ class Role:
 
 
 class ServicePrincipalName:
-    def __init__(self, url: str, uuid: uuid):
+    def __init__(self, url: str, uuid: str):
         self.url = url
         self.uuid = uuid
 
@@ -49,6 +50,7 @@ class ServicePrincipal:
         self.displayName = displayName
         self.servicePrincipalNames = servicePrincipalNames
 
+    @staticmethod
     def populate(servicePrincipal: dict):
         return ServicePrincipal(**servicePrincipal)
 
@@ -96,6 +98,7 @@ class User:
         self.onPremiseUserPrincipalName = onPremiseUserPrincipalName
         self.preferredDataLocation = preferredDataLocation
 
+    @staticmethod
     def populate(user: dict):
         return User(**user)
 
@@ -122,6 +125,7 @@ class Context:
         self.client = client
         self.correlationId = correlationId
 
+    @staticmethod
     def populate(context: dict):
         return Context(
             correlationId=context.get("correlationId"),

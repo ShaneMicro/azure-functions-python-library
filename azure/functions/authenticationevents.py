@@ -1,7 +1,7 @@
 import json
 import typing
-import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 as preview_10_01_2021  # noqa: E501
-import azure.functions.authentication_events as _abc
+from azure.functions.authentication_events.token_issuance_start import preview_10_01_2021  # noqa: E501
+from azure.functions import authentication_events as _abc
 from . import meta
 
 
