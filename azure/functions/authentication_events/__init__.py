@@ -3,7 +3,7 @@ from enum import Enum
 import json
 import typing
 
-from typing import List
+from typing import List, Optional
 
 
 class RequestStatus(Enum):
@@ -13,20 +13,11 @@ class RequestStatus(Enum):
 
 
 class _IAuthenticationEventResponse(abc.ABC):
-    def __init__(self, schema: str, body: str):
+    def __init__(self, schema: Optional[str], body: Optional[str] = None):
         self.schema = schema
         self.body = body
-        self.jsonBody = json.loads(body)
-
-    def invalidate():
-        pass
-
-    @staticmethod
-    def create_instance(type: type, schema: str, body: str):
-        response = _IAuthenticationEventResponse(type())
-        response.Schema = schema
-        response.Body = body
-        return response
+        if body is not None:
+            self.jsonBody = json.loads(body)
 
 
 class _IAuthenticationEventAction(abc.ABC):
@@ -40,7 +31,12 @@ action_type = typing.TypeVar("action_type", bound=_IAuthenticationEventAction)
 class _IAuthenticationEventIActionableResponse(
     _IAuthenticationEventResponse, typing.Generic[action_type]
 ):
-    def __init__(self, schema: str, body: str, actions: List[action_type]):
+    def __init__(
+        self,
+        schema: Optional[str],
+        body: Optional[str],
+        actions: List[action_type]
+    ):
         super().__init__(schema, body)
         self.actions = actions
 
@@ -48,11 +44,11 @@ class _IAuthenticationEventIActionableResponse(
 class _IAuthenticationEventData(abc.ABC):
     def __init__(
         self,
-        eventListenerId: str,
-        time: str,
-        apiSchemaVersion: str,
-        eventType: str,
-        customExtensionId: str,
+        eventListenerId: Optional[str],
+        time: Optional[str],
+        apiSchemaVersion: Optional[str],
+        eventType: Optional[str],
+        customExtensionId: Optional[str],
     ):
         self.type = eventType
         self.apiSchemaVersion = apiSchemaVersion
@@ -60,18 +56,10 @@ class _IAuthenticationEventData(abc.ABC):
         self.eventListenerId = eventListenerId
         self.customExtensionId = customExtensionId
 
-    @classmethod
-    def from_json(json: str):
-        jsonString = json.loads(json)
-        return _IAuthenticationEventData(**jsonString)
 
-    @staticmethod
-    def create_instance(Type, json: str):
-        data = _IAuthenticationEventData(Type())
-        return data if not json else data.from_json(json)
-
-
-response_type = typing.TypeVar("response_type", bound=_IAuthenticationEventResponse)  # noqa: E501
+response_type = typing.TypeVar(
+    "response_type", bound=_IAuthenticationEventResponse
+)  # noqa: E501
 payload_type = typing.TypeVar("payload_type", bound=_IAuthenticationEventData)
 
 
@@ -80,7 +68,7 @@ class _IAuthenticationEventRequest(
 ):
     def __init__(
         self,
-        statusMessage: str,
+        statusMessage: Optional[str],
         requestStatus: RequestStatus,
         response: response_type,
         payload: payload_type,
@@ -91,6 +79,7 @@ class _IAuthenticationEventRequest(
         self.payload = payload
 
     @abc.abstractmethod
+    @staticmethod
     def create_instance(result: dict):
         pass
 

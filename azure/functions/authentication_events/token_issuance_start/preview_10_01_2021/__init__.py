@@ -8,10 +8,8 @@ from ....authentication_events import (
     _IAuthenticationEventData,
     _IAuthenticationEventRequest,
     RequestStatus,
-    response_type,
-    payload_type,
 )
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 
 class TokenIssuanceStartResponse(
@@ -20,18 +18,20 @@ class TokenIssuanceStartResponse(
 ):
     def __init__(
         self,
-        schema: str,
-        body: str,
-        actions: List[ITokenIssuanceAction]
+        actions: List[ITokenIssuanceAction],
+        schema: Optional[str] = None,
+        body: Optional[str] = None
     ):
         super().__init__(schema=schema, body=body, actions=actions)
 
-    def create_instance(response: dict):
-        return TokenIssuanceStartResponse(
-            schema=response.get("schema"),
-            body=response.get("body"),
-            actions=[]
-        )
+    @staticmethod
+    def create_instance(response: Optional[dict] = None):
+        if response is not None:
+            return TokenIssuanceStartResponse(
+                schema=response.get("schema"),
+                body=response.get("body"),
+                actions=[]
+            )
 
     def to_dict(self):
         return {
@@ -47,12 +47,12 @@ class TokenIssuanceStartResponse(
 class TokenIssuanceStartData(_IAuthenticationEventData):
     def __init__(
         self,
-        eventListenerId: str,
-        time: str,
-        apiSchemaVersion: str,
-        eventType: str,
-        context: Context,
-        customExtensionId: str,
+        eventListenerId: Optional[str],
+        time: Optional[str],
+        apiSchemaVersion: Optional[str],
+        eventType: Optional[str],
+        customExtensionId: Optional[str],
+        context: Optional[Context] = None
     ):
         self.context = context
         super().__init__(
@@ -63,15 +63,17 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
             customExtensionId=customExtensionId,
         )
 
-    def create_instance(payload: dict):
-        return TokenIssuanceStartData(
-            eventListenerId=payload.get("eventListenerId"),
-            time=payload.get("time"),
-            eventType=payload.get("type"),
-            apiSchemaVersion=payload.get("apiSchemaVersion"),
-            context=Context.populate(payload.get("context")),
-            customExtensionId=payload.get("customExtensionId"),
-        )
+    @staticmethod
+    def create_instance(payload: Optional[dict] = None):
+        if payload is not None:
+            return TokenIssuanceStartData(
+                eventListenerId=payload.get("eventListenerId"),
+                time=payload.get("time"),
+                eventType=payload.get("type"),
+                apiSchemaVersion=payload.get("apiSchemaVersion"),
+                context=Context.populate(payload.get("context")),
+                customExtensionId=payload.get("customExtensionId"),
+            )
 
 
 class TokenIssuanceStartRequest(
@@ -81,11 +83,11 @@ class TokenIssuanceStartRequest(
 ):
     def __init__(
         self,
-        statusMessage: str,
+        statusMessage: Optional[str],
         requestStatus: RequestStatus,
-        response: response_type,
-        payload: payload_type,
-        tokenClaims: Dict[str, str],
+        response: TokenIssuanceStartResponse,
+        payload: TokenIssuanceStartData,
+        tokenClaims: Optional[Dict[str, str]],
     ):
 
         super().__init__(
@@ -96,6 +98,7 @@ class TokenIssuanceStartRequest(
         )
         self.tokenClaims = tokenClaims
 
+    @staticmethod
     def create_instance(result: dict):
         response = TokenIssuanceStartResponse.create_instance(
             response=result.get("response")

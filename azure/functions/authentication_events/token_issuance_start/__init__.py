@@ -3,7 +3,7 @@ import json
 from typing import List
 
 
-class ITokenIssuanceAction(_IAuthenticationEventAction):
+class ITokenIssuanceAction(_IAuthenticationEventAction, _Serializable):
     def __init__(self, actionType):
         self.actionType = actionType
 
@@ -13,7 +13,7 @@ class Claim(_Serializable):
         self.id = id
         self.values = values
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {"id": self.id, "value": self.values}
 
     def to_json(self):

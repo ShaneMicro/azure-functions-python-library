@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 
 class AuthProtocol:
@@ -7,8 +7,9 @@ class AuthProtocol:
         self.tenantId = tenantId
 
     @staticmethod
-    def populate(authProtocol: dict):
-        return AuthProtocol(**authProtocol)
+    def populate(authProtocol: Optional[dict] = None):
+        if authProtocol is not None:
+            return AuthProtocol(**authProtocol)
 
 
 class Client:
@@ -16,8 +17,9 @@ class Client:
         self.ip = ip
 
     @staticmethod
-    def populate(client: dict):
-        return Client(**client)
+    def populate(client: Optional[dict] = None):
+        if client is not None:
+            return Client(**client)
 
 
 class Role:
@@ -51,8 +53,9 @@ class ServicePrincipal:
         self.servicePrincipalNames = servicePrincipalNames
 
     @staticmethod
-    def populate(servicePrincipal: dict):
-        return ServicePrincipal(**servicePrincipal)
+    def populate(servicePrincipal: Optional[dict] = None):
+        if servicePrincipal is not None:
+            return ServicePrincipal(**servicePrincipal)
 
 
 class User:
@@ -99,8 +102,9 @@ class User:
         self.preferredDataLocation = preferredDataLocation
 
     @staticmethod
-    def populate(user: dict):
-        return User(**user)
+    def populate(user: Optional[dict] = None):
+        if user is not None:
+            return User(**user)
 
 
 Roles = List[Role]
@@ -109,34 +113,37 @@ Roles = List[Role]
 class Context:
     def __init__(
         self,
-        correlationId: str,
         client: Client,
         authProtocol: AuthProtocol,
         clientServicePrincipal: ServicePrincipal,
         resourceServicePrincipal: ServicePrincipal,
-        roles: Roles,
         user: User,
+        correlationId: Optional[str] = None,
+        roles: Optional[Roles] = None,
     ):
         self.user = user
-        self.roles = roles
         self.resourceServicePrincipal = resourceServicePrincipal
         self.clientServicePrincipal = clientServicePrincipal
         self.authProtocol = authProtocol
         self.client = client
-        self.correlationId = correlationId
+        if correlationId is not None:
+            self.correlationId = correlationId
+        if roles is not None:
+            self.roles = roles
 
     @staticmethod
-    def populate(context: dict):
-        return Context(
-            correlationId=context.get("correlationId"),
-            user=User.populate(context.get("user")),
-            client=Client.populate(context.get("client")),
-            clientServicePrincipal=ServicePrincipal.populate(
-                context.get("clientServicePrincipal")
-            ),
-            resourceServicePrincipal=ServicePrincipal.populate(
-                context.get("resourceServicePrincipal")
-            ),
-            roles=context.get("roles"),
-            authProtocol=AuthProtocol.populate(context.get("authProtocol")),
-        )
+    def populate(context: Optional[dict] = None):
+        if context is not None:
+            return Context(
+                correlationId=context.get("correlationId"),
+                user=User.populate(context.get("user")),
+                client=Client.populate(context.get("client")),
+                clientServicePrincipal=ServicePrincipal.populate(
+                    context.get("clientServicePrincipal")
+                ),
+                resourceServicePrincipal=ServicePrincipal.populate(
+                    context.get("resourceServicePrincipal")
+                ),
+                roles=context.get("roles"),
+                authProtocol=AuthProtocol.populate(context.get("authProtocol")),  # noqa: E501
+            )
