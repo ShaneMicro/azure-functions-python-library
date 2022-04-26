@@ -78,6 +78,7 @@ class _IAuthenticationEventRequest(
         self.response = response
         self.payload = payload
 
+    @staticmethod
     @abc.abstractmethod
     def create_instance(result: dict):
         pass
