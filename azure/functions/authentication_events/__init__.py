@@ -97,7 +97,7 @@ class _Serializable(abc.ABC):
 class FailedRequest(_IActionableResponse, _Serializable):
     def __init__(self, error: str):
         self.error = error
-    
+
     @staticmethod
     def handle(error: Exception):
         return FailedRequest(str(error))
