@@ -1,9 +1,9 @@
-from ...authentication_events import _IAuthenticationEventAction, _Serializable
+from ...authentication_events import _IEventAction, _Serializable
 import json
 from typing import List
 
 
-class ITokenIssuanceAction(_IAuthenticationEventAction, _Serializable):
+class ITokenIssuanceAction(_IEventAction, _Serializable):
     def __init__(self, actionType):
         self.actionType = actionType
 

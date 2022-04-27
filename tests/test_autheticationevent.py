@@ -240,7 +240,7 @@ class TestDurableFunctions(unittest.TestCase):
             AuthenticationEventTriggerConverter.encode(obj=onTokenIssuanceStartRequest, expected_type="object")  # noqa: E501
 
     def test_encode_object_typ(self):
-        response = _abc._IAuthenticationEventResponse(
+        response = _abc._IEventResponse(
             schema="test", body='{"test":"Not serializable"}'
         )
         with self.assertRaisesRegex(

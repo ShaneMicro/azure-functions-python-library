@@ -12,7 +12,7 @@ class RequestStatus(Enum):
     Successful = "Successful"
 
 
-class _IAuthenticationEventResponse(abc.ABC):
+class _IEventResponse(abc.ABC):
     def __init__(self, schema: str = None, body: str = None):
         self.schema = schema
         self.body = body
@@ -20,16 +20,16 @@ class _IAuthenticationEventResponse(abc.ABC):
             self.jsonBody = json.loads(body)
 
 
-class _IAuthenticationEventAction(abc.ABC):
+class _IEventAction(abc.ABC):
     def __init__(self, actionType: str):
         self.actionType = actionType
 
 
-action_type = typing.TypeVar("action_type", bound=_IAuthenticationEventAction)
+action_type = typing.TypeVar("action_type", bound=_IEventAction)
 
 
-class _IAuthenticationEventIActionableResponse(
-    _IAuthenticationEventResponse, typing.Generic[action_type]
+class _IActionableResponse(
+    _IEventResponse, typing.Generic[action_type]
 ):
     def __init__(
         self,
@@ -41,7 +41,7 @@ class _IAuthenticationEventIActionableResponse(
         self.actions = actions
 
 
-class _IAuthenticationEventData(abc.ABC):
+class _IEventData(abc.ABC):
     def __init__(
         self,
         eventListenerId: str = None,
@@ -58,12 +58,12 @@ class _IAuthenticationEventData(abc.ABC):
 
 
 response_type = typing.TypeVar(
-    "response_type", bound=_IAuthenticationEventResponse
+    "response_type", bound=_IEventResponse
 )  # noqa: E501
-payload_type = typing.TypeVar("payload_type", bound=_IAuthenticationEventData)
+payload_type = typing.TypeVar("payload_type", bound=_IEventData)
 
 
-class _IAuthenticationEventRequest(
+class _IEventRequest(
     abc.ABC, typing.Generic[response_type, payload_type]
 ):
     def __init__(
@@ -92,3 +92,17 @@ class _Serializable(abc.ABC):
     @abc.abstractmethod
     def to_json(self) -> str:
         pass
+
+
+class FailedRequest(_IActionableResponse, _Serializable):
+    def __init__(self, error: str):
+        self.error = error
+
+    def handle(error: Exception):
+        return FailedRequest(str(error))
+
+    def to_dict(self) -> dict:
+        return {"error": self.error}
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict())

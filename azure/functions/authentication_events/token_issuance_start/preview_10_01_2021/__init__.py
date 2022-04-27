@@ -3,17 +3,18 @@ import json
 from .data import Context
 from ...token_issuance_start import ITokenIssuanceAction
 from ....authentication_events import (
-    _IAuthenticationEventIActionableResponse,
+    _IActionableResponse,
     _Serializable,
-    _IAuthenticationEventData,
-    _IAuthenticationEventRequest,
+    _IEventData,
+    _IEventRequest,
     RequestStatus,
+    FailedRequest
 )
 from typing import List, Dict
 
 
 class TokenIssuanceStartResponse(
-    _IAuthenticationEventIActionableResponse[ITokenIssuanceAction],
+    _IActionableResponse[ITokenIssuanceAction],
     _Serializable
 ):
     def __init__(
@@ -44,7 +45,7 @@ class TokenIssuanceStartResponse(
         return json.dumps(self.to_dict())
 
 
-class TokenIssuanceStartData(_IAuthenticationEventData):
+class TokenIssuanceStartData(_IEventData):
     def __init__(
         self,
         eventListenerId: str = None,
@@ -77,7 +78,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
 
 
 class TokenIssuanceStartRequest(
-    _IAuthenticationEventRequest[
+    _IEventRequest[
         TokenIssuanceStartResponse,
         TokenIssuanceStartData]
 ):
