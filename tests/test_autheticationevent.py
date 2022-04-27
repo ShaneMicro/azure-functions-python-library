@@ -226,9 +226,7 @@ class TestDurableFunctions(unittest.TestCase):
         data_dict = json.loads(AuthenticationEventsResources.request_data)
         data_dict["payload"]["apiSchemaVersion"] = "Negative test string"
         datum = Datum(value=json.dumps(data_dict), type="object")
-        with self.assertRaisesRegex(
-            Exception, "unsupported authentication event trigger payload type:"
-        ):
+        with self.assertRaisesRegex(Exception, "unsupported authentication event trigger payload type:"):  # noqa: E501
             AuthenticationEventTriggerConverter.decode(datum, trigger_metadata=None)  # noqa: E501
 
     def test_encode_object_type(self):
@@ -238,12 +236,8 @@ class TestDurableFunctions(unittest.TestCase):
                 result=json_data
             )
         )
-        with self.assertRaisesRegex(
-            Exception, "Object should be of valid response type"
-        ):
-            AuthenticationEventTriggerConverter.encode(
-                obj=onTokenIssuanceStartRequest, expected_type="object"
-            )
+        with self.assertRaisesRegex(Exception, "Object should be of valid response type"):  # noqa: E501
+            AuthenticationEventTriggerConverter.encode(obj=onTokenIssuanceStartRequest, expected_type="object")  # noqa: E501
 
     def test_encode_object_typ(self):
         response = _abc._IAuthenticationEventResponse(
