@@ -9,11 +9,13 @@ class ProvideClaimsForToken(ITokenIssuanceAction):
         self.claims = claims
 
     def to_dict(self) -> dict:
-        temp: dict = {
+        return {
             "actionType": self.actionType,
             "claims": list(map(lambda c: c.to_dict(), self.claims)),
         }
-        return temp
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict())
+
+    def add_claim(self, id: str, values: List[str]):
+        self.claims.append(Claim(id=id, values=values))

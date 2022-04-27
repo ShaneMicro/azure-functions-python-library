@@ -33,14 +33,14 @@ class TokenIssuanceStartResponse(
                 actions=[]
             )
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return {
             "actions": list(map(lambda a: a.to_dict(), self.actions)),
             "schema": self.schema,
-            "body": self.body,
+            "body": self.body
         }
 
-    def to_json(self):
+    def to_json(self) -> str:
         return json.dumps(self.to_dict())
 
 
@@ -100,15 +100,10 @@ class TokenIssuanceStartRequest(
 
     @staticmethod
     def create_instance(result: dict):
-        response = TokenIssuanceStartResponse.create_instance(
-            response=result.get("response")
-        )
-        data = TokenIssuanceStartData.create_instance(payload=result.get("payload"))  # noqa: E501
-        tokenclaims = result.get("tokenClaims")
         return TokenIssuanceStartRequest(
             statusMessage=result.get("statusMessage"),
             requestStatus=RequestStatus(result.get("requestStatus")),
-            response=response,
-            payload=data,
-            tokenClaims=tokenclaims,
+            response=TokenIssuanceStartResponse.create_instance(response=result.get("response")),  # noqa: E501
+            payload=TokenIssuanceStartData.create_instance(payload=result.get("payload")),  # noqa: E501
+            tokenClaims=result.get("tokenClaims")
         )

@@ -16,5 +16,5 @@ class Claim(_Serializable):
     def to_dict(self) -> dict:
         return {"id": self.id, "value": self.values}
 
-    def to_json(self):
+    def to_json(self) -> str:
         return json.dumps(self.to_dict())
