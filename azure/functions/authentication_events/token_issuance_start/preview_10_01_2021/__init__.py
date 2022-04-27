@@ -7,9 +7,10 @@ from ....authentication_events import (
     _Serializable,
     _IEventData,
     _IEventRequest,
-    RequestStatus,
-    FailedRequest
+    RequestStatus
 )
+from ....authentication_events import FailedRequest  # noqa: F401
+
 from typing import List, Dict
 
 
