@@ -1,14 +1,9 @@
-from importlib import import_module
 import json
-from logging import exception
-from re import T
-from this import d 
 import typing
-import azure.functions.authentication_events.token_issuance_start.preview_10_01_2021 as preview_10_01_2021
-import azure.functions.authentication_events as _abc
-
-
+from azure.functions.authentication_events.token_issuance_start import preview_10_01_2021  # noqa: E501
+from azure.functions import authentication_events as _abc
 from . import meta
+
 
 # Authentication Event Trigger
 class AuthenticationEventTriggerConverter(meta.InConverter,
@@ -40,12 +35,12 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                 response = json.loads(data.value)
 
                 if "payload" in response:
-                    if response.get("payload").get('type') =='onTokenIssuanceStartCustomExtension':
-                        if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":
+                    if response.get("payload").get('type') == 'onTokenIssuanceStartCustomExtension':  # noqa: E501
+                        if response.get('payload').get("apiSchemaVersion") == "10-01-2021-preview":  # noqa: E501
                             try:
-                                return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)
+                                return preview_10_01_2021.TokenIssuanceStartRequest.create_instance(result=response)  # noqa: E501
                             except Exception:
-                                raise ValueError('authentication event trigger input must be a string or a 'f'valid json serializable ({data.value})')
+                                raise ValueError('authentication event trigger input must be a string or a 'f'valid json serializable ({data.value})')  # noqa: E501
                         else:
                             raise ValueError('Version not supported')
                     else:
@@ -53,30 +48,28 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                 else:
                     raise ValueError('request data does not contain payload')
 
-            
-                
             except json.JSONDecodeError:
-                result = data.value  
+                response = data.value
         else:
             raise NotImplementedError(
-                f'unsupported authentication event trigger payload type: {data_type}')
+                f'unsupported authentication event trigger payload type: {data_type}')  # noqa: E501
 
         return response
 
     @classmethod
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
-        
-        if not isinstance(obj,_abc._IAuthenticationEventResponse):
+
+        if not isinstance(obj, _abc._IAuthenticationEventResponse):
             raise ValueError('Object should be of valid response type')
-        if not isinstance(obj,_abc._Serializable):
+        if not isinstance(obj, _abc._Serializable):
             raise ValueError('Object was not of expected type Serializable')
-       
+
         try:
             result = obj.to_json()
         except TypeError:
             raise ValueError(
-                f'authentication event trigger output must be json serializable ({obj})')
+                f'authentication event trigger output must be json serializable ({obj})')  # noqa: E501
 
         return meta.Datum(type='json', value=result)
 
