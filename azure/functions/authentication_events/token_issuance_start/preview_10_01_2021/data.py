@@ -7,7 +7,7 @@ class AuthProtocol:
         self.tenantId = tenantId
 
     @staticmethod
-    def populate(authProtocol: Optional[dict] = None):
+    def populate(authProtocol: dict = None):
         if authProtocol is not None:
             return AuthProtocol(**authProtocol)
 
@@ -17,7 +17,7 @@ class Client:
         self.ip = ip
 
     @staticmethod
-    def populate(client: Optional[dict] = None):
+    def populate(client: dict = None):
         if client is not None:
             return Client(**client)
 
@@ -53,7 +53,7 @@ class ServicePrincipal:
         self.servicePrincipalNames = servicePrincipalNames
 
     @staticmethod
-    def populate(servicePrincipal: Optional[dict] = None):
+    def populate(servicePrincipal: dict = None):
         if servicePrincipal is not None:
             return ServicePrincipal(**servicePrincipal)
 
@@ -102,7 +102,7 @@ class User:
         self.preferredDataLocation = preferredDataLocation
 
     @staticmethod
-    def populate(user: Optional[dict] = None):
+    def populate(user: dict = None):
         if user is not None:
             return User(**user)
 
@@ -118,8 +118,8 @@ class Context:
         clientServicePrincipal: ServicePrincipal,
         resourceServicePrincipal: ServicePrincipal,
         user: User,
-        correlationId: Optional[str] = None,
-        roles: Optional[Roles] = None,
+        correlationId: str = None,
+        roles: Roles = None,
     ):
         self.user = user
         self.resourceServicePrincipal = resourceServicePrincipal
@@ -132,7 +132,7 @@ class Context:
             self.roles = roles
 
     @staticmethod
-    def populate(context: Optional[dict] = None):
+    def populate(context: dict = None):
         if context is not None:
             return Context(
                 correlationId=context.get("correlationId"),

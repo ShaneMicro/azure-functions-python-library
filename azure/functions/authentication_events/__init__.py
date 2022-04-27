@@ -3,7 +3,7 @@ from enum import Enum
 import json
 import typing
 
-from typing import List, Optional
+from typing import List
 
 
 class RequestStatus(Enum):
@@ -13,7 +13,7 @@ class RequestStatus(Enum):
 
 
 class _IAuthenticationEventResponse(abc.ABC):
-    def __init__(self, schema: Optional[str], body: Optional[str] = None):
+    def __init__(self, schema: str = None, body: str = None):
         self.schema = schema
         self.body = body
         if body is not None:
@@ -33,9 +33,9 @@ class _IAuthenticationEventIActionableResponse(
 ):
     def __init__(
         self,
-        schema: Optional[str],
-        body: Optional[str],
-        actions: List[action_type]
+        actions: List[action_type],
+        schema: str = None,
+        body: str = None
     ):
         super().__init__(schema, body)
         self.actions = actions
@@ -44,11 +44,11 @@ class _IAuthenticationEventIActionableResponse(
 class _IAuthenticationEventData(abc.ABC):
     def __init__(
         self,
-        eventListenerId: Optional[str],
-        time: Optional[str],
-        apiSchemaVersion: Optional[str],
-        eventType: Optional[str],
-        customExtensionId: Optional[str],
+        eventListenerId: str = None,
+        time: str = None,
+        apiSchemaVersion: str = None,
+        eventType: str = None,
+        customExtensionId: str = None,
     ):
         self.type = eventType
         self.apiSchemaVersion = apiSchemaVersion
@@ -68,10 +68,10 @@ class _IAuthenticationEventRequest(
 ):
     def __init__(
         self,
-        statusMessage: Optional[str],
         requestStatus: RequestStatus,
         response: response_type,
         payload: payload_type,
+        statusMessage: str = None,
     ):
         self.statusMessage = statusMessage
         self.requestStatus = requestStatus

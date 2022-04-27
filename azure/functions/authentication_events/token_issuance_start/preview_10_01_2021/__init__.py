@@ -9,7 +9,7 @@ from ....authentication_events import (
     _IAuthenticationEventRequest,
     RequestStatus,
 )
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 
 class TokenIssuanceStartResponse(
@@ -19,13 +19,13 @@ class TokenIssuanceStartResponse(
     def __init__(
         self,
         actions: List[ITokenIssuanceAction],
-        schema: Optional[str] = None,
-        body: Optional[str] = None
+        schema: str = None,
+        body: str = None
     ):
         super().__init__(schema=schema, body=body, actions=actions)
 
     @staticmethod
-    def create_instance(response: Optional[dict] = None):
+    def create_instance(response: dict = None):
         if response is not None:
             return TokenIssuanceStartResponse(
                 schema=response.get("schema"),
@@ -47,12 +47,12 @@ class TokenIssuanceStartResponse(
 class TokenIssuanceStartData(_IAuthenticationEventData):
     def __init__(
         self,
-        eventListenerId: Optional[str],
-        time: Optional[str],
-        apiSchemaVersion: Optional[str],
-        eventType: Optional[str],
-        customExtensionId: Optional[str],
-        context: Optional[Context] = None
+        eventListenerId: str = None,
+        time: str = None,
+        apiSchemaVersion: str = None,
+        eventType: str = None,
+        customExtensionId: str = None,
+        context: Context = None
     ):
         self.context = context
         super().__init__(
@@ -64,7 +64,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
         )
 
     @staticmethod
-    def create_instance(payload: Optional[dict] = None):
+    def create_instance(payload: dict = None):
         if payload is not None:
             return TokenIssuanceStartData(
                 eventListenerId=payload.get("eventListenerId"),
@@ -83,11 +83,11 @@ class TokenIssuanceStartRequest(
 ):
     def __init__(
         self,
-        statusMessage: Optional[str],
         requestStatus: RequestStatus,
         response: TokenIssuanceStartResponse,
         payload: TokenIssuanceStartData,
-        tokenClaims: Optional[Dict[str, str]],
+        statusMessage: str = None,
+        tokenClaims: Dict[str, str] = None,
     ):
 
         super().__init__(
