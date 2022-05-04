@@ -42,11 +42,11 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                             except Exception:
                                 raise ValueError('authentication event trigger input must be a string or a 'f'valid json serializable ({data.value})')  # noqa: E501
                         else:
-                            raise ValueError('Version not supported')
+                            raise ValueError('Version not supported, supported versions are {10-01-2021-preview}')
                     else:
-                        raise ValueError('Event type not supported')
+                        raise ValueError('Event type not supported, supported event types are {onTokenIssuanceStartCustomExtension}')
                 else:
-                    raise ValueError('request data does not contain payload')
+                    raise ValueError('The incoming request does not contain any data or payload')
 
             except json.JSONDecodeError:
                 response = data.value
