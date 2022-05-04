@@ -59,13 +59,15 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     @classmethod
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
-
+        # only serialize if incoming object is of response type.
         if not isinstance(obj, _abc._IAuthenticationEventResponse):
             raise ValueError('Object should be of valid response type')
+        # only serialize if incoming object is serializable
         if not isinstance(obj, _abc._Serializable):
             raise ValueError('Object was not of expected type Serializable')
 
         try:
+            # convert incoming object to json string
             result = obj.to_json()
         except TypeError:
             raise ValueError(

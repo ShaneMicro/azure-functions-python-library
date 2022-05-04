@@ -11,7 +11,8 @@ from ....authentication_events import (
 )
 from typing import List, Dict
 
-
+# The main response class that is related to the request, this extends IActionable as the response
+# contains actions, we only allow actions that inherit the TokenIssuanceStartAction.
 class TokenIssuanceStartResponse(
     _IAuthenticationEventIActionableResponse[ITokenIssuanceAction],
     _Serializable
@@ -23,7 +24,7 @@ class TokenIssuanceStartResponse(
         body: str = None
     ):
         super().__init__(schema=schema, body=body, actions=actions)
-
+    # static method to create instance of the object from dict
     @staticmethod
     def create_instance(response: dict = None):
         if response is not None:
@@ -43,7 +44,7 @@ class TokenIssuanceStartResponse(
     def to_json(self) -> str:
         return json.dumps(self.to_dict())
 
-
+# The main data class related to the request.
 class TokenIssuanceStartData(_IAuthenticationEventData):
     def __init__(
         self,
@@ -54,6 +55,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
         customExtensionId: str = None,
         context: Context = None
     ):
+        # The main context of the data.
         self.context = context
         super().__init__(
             eventListenerId=eventListenerId,
@@ -63,6 +65,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
             customExtensionId=customExtensionId,
         )
 
+    # static method to create instance of the object from dict
     @staticmethod
     def create_instance(payload: dict = None):
         if payload is not None:
@@ -75,7 +78,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
                 customExtensionId=payload.get("customExtensionId"),
             )
 
-
+# The main request class, this will relate it's response and payload.
 class TokenIssuanceStartRequest(
     _IAuthenticationEventRequest[
         TokenIssuanceStartResponse,
@@ -96,8 +99,9 @@ class TokenIssuanceStartRequest(
             response=response,
             payload=payload,
         )
+        # A dictionary of token claims.
         self.tokenClaims = tokenClaims
-
+    # static method to create instance of the object from dict
     @staticmethod
     def create_instance(result: dict):
         return TokenIssuanceStartRequest(
