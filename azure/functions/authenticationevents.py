@@ -59,13 +59,8 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     @classmethod
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
-<<<<<<< HEAD
         # only serialize if incoming object is of response type.
         if not isinstance(obj, _abc._IAuthenticationEventResponse):
-=======
-
-        if not isinstance(obj, _abc._IEventResponse):
->>>>>>> dev
             raise ValueError('Object should be of valid response type')
         # only serialize if incoming object is serializable
         if not isinstance(obj, _abc._Serializable):

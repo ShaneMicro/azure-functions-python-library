@@ -2,13 +2,8 @@ from ...authentication_events import _IEventAction, _Serializable
 import json
 from typing import List
 
-<<<<<<< HEAD
 # All actions for the token issuance start event should extended this class, as it looks the correct action to the correct event.
 class ITokenIssuanceAction(_IAuthenticationEventAction, _Serializable):
-=======
-
-class ITokenIssuanceAction(_IEventAction, _Serializable):
->>>>>>> dev
     def __init__(self, actionType):
         # This will be the 'Name' of the action in the JSON.
         self.actionType = actionType
