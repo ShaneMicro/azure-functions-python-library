@@ -3,18 +3,20 @@ import json
 from .data import Context
 from ...token_issuance_start import ITokenIssuanceAction
 from ....authentication_events import (
-    _IAuthenticationEventIActionableResponse,
+    _IActionableResponse,
     _Serializable,
-    _IAuthenticationEventData,
-    _IAuthenticationEventRequest,
-    RequestStatus,
+    _IEventData,
+    _IEventRequest,
+    RequestStatus
 )
+from ....authentication_events import FailedRequest  # noqa: F401
+
 from typing import List, Dict
 
 # The main response class that is related to the request, this extends IActionable as the response
 # contains actions, we only allow actions that inherit the TokenIssuanceStartAction.
 class TokenIssuanceStartResponse(
-    _IAuthenticationEventIActionableResponse[ITokenIssuanceAction],
+    _IActionableResponse[ITokenIssuanceAction],
     _Serializable
 ):
     def __init__(
@@ -45,7 +47,7 @@ class TokenIssuanceStartResponse(
         return json.dumps(self.to_dict())
 
 # The main data class related to the request.
-class TokenIssuanceStartData(_IAuthenticationEventData):
+class TokenIssuanceStartData(_IEventData):
     def __init__(
         self,
         eventListenerId: str = None,
@@ -80,7 +82,7 @@ class TokenIssuanceStartData(_IAuthenticationEventData):
 
 # The main request class, this will relate it's response and payload.
 class TokenIssuanceStartRequest(
-    _IAuthenticationEventRequest[
+    _IEventRequest[
         TokenIssuanceStartResponse,
         TokenIssuanceStartData]
 ):
