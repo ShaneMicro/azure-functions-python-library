@@ -15,7 +15,7 @@ class RequestStatus(Enum):
     Successful = "Successful"
 
 # Event response class that houses attributes returned from the authentication events trigger.
-class _IAuthenticationEventResponse(abc.ABC):
+class _IEventResponse(abc.ABC):
     def __init__(self, schema: str = None, body: str = None):
         # The schema the of expected response.
         self.schema = schema
@@ -26,7 +26,7 @@ class _IAuthenticationEventResponse(abc.ABC):
             self.jsonBody = json.loads(body)
 
 # A class representing an action for an event.
-class _IAuthenticationEventAction(abc.ABC):
+class _IEventAction(abc.ABC):
     def __init__(self, actionType: str):
         #  Must be overridden, this will be the 'Name' of the action in the JSON.
         self.actionType = actionType
@@ -35,8 +35,8 @@ class _IAuthenticationEventAction(abc.ABC):
 action_type = typing.TypeVar("action_type", bound=_IEventAction)
 
 # Class that binds a response that has actions
-class _IAuthenticationEventIActionableResponse(
-    _IAuthenticationEventResponse, typing.Generic[action_type]
+class _IActionableResponse(
+    _IEventResponse, typing.Generic[action_type]
 ):
     def __init__(
         self,
@@ -49,7 +49,7 @@ class _IAuthenticationEventIActionableResponse(
         self.actions = actions
 
 # Event data class pertaining to the expected payload, this class houses the common attributes for data events.
-class _IAuthenticationEventData(abc.ABC):
+class _IEventData(abc.ABC):
     def __init__(
         self,
         eventListenerId: str = None,
@@ -76,7 +76,7 @@ response_type = typing.TypeVar(
 payload_type = typing.TypeVar("payload_type", bound=_IEventData)
 
 # Abstract base event class to house common event request attributes.
-class _IAuthenticationEventRequest(
+class _IEventRequest(
     abc.ABC, typing.Generic[response_type, payload_type]
 ):
     def __init__(
