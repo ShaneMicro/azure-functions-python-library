@@ -1,5 +1,6 @@
 from typing import List
 
+
 # Protocol class for data
 class AuthProtocol:
     def __init__(self, type: str, tenantId: str):
@@ -8,10 +9,12 @@ class AuthProtocol:
         # The tenant identifier.
         self.tenantId = tenantId
     # static method to create instance of the object from dict
+
     @staticmethod
     def populate(authProtocol: dict = None):
         if authProtocol is not None:
             return AuthProtocol(**authProtocol)
+
 
 # Client class for data.
 class Client:
@@ -19,10 +22,12 @@ class Client:
         # The Ip Address
         self.ip = ip
     # static method to create instance of the object from dict
+
     @staticmethod
     def populate(client: dict = None):
         if client is not None:
             return Client(**client)
+
 
 # Role class for data.
 class Role:
@@ -40,6 +45,7 @@ class ServicePrincipalName:
 
 
 listOfServicePrincipalName = List[ServicePrincipalName]
+
 
 # ResourceServicePrincipal class for data.
 class ServicePrincipal:
@@ -62,10 +68,12 @@ class ServicePrincipal:
         # A list of service principal name.
         self.servicePrincipalNames = servicePrincipalNames
     # static method to create instance of the object from dict
+
     @staticmethod
     def populate(servicePrincipal: dict = None):
         if servicePrincipal is not None:
             return ServicePrincipal(**servicePrincipal)
+
 
 # User class for data.
 class User:
@@ -111,6 +119,7 @@ class User:
         self.onPremisesSecurityIdentifier = onPremisesSecurityIdentifier
         self.onPremiseUserPrincipalName = onPremiseUserPrincipalName
         self.preferredDataLocation = preferredDataLocation
+
     # static method to create instance of the object from dict
     @staticmethod
     def populate(user: dict = None):
@@ -119,6 +128,7 @@ class User:
 
 
 Roles = List[Role]
+
 
 # Context class for data.
 class Context:
@@ -148,6 +158,7 @@ class Context:
         # A list of roles
         if roles is not None:
             self.roles = roles
+
     # static method to create instance of the object from dict
     @staticmethod
     def populate(context: dict = None):

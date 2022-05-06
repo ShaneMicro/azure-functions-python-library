@@ -7,7 +7,7 @@ import azure.functions.authentication_events as _abc
 from .resource import AuthenticationEventsResources
 
 
-class TestDurableFunctions(unittest.TestCase):
+class TestauthenticationEvents(unittest.TestCase):
     def test_object_creation_payload(self):
 
         json_data = json.loads(AuthenticationEventsResources.request_data)

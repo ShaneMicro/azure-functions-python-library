@@ -13,8 +13,9 @@ from ....authentication_events import FailedRequest  # noqa: F401
 
 from typing import List, Dict
 
-# The main response class that is related to the request, this extends IActionable as the response
-# contains actions, we only allow actions that inherit the TokenIssuanceStartAction.
+
+# The main response class that is related to the request, this extends IActionable as the response  # noqa: E501
+# contains actions, we only allow actions that inherit the TokenIssuanceStartAction.  # noqa: E501
 class TokenIssuanceStartResponse(
     _IActionableResponse[ITokenIssuanceAction],
     _Serializable
@@ -27,6 +28,7 @@ class TokenIssuanceStartResponse(
     ):
         super().__init__(schema=schema, body=body, actions=actions)
     # static method to create instance of the object from dict
+
     @staticmethod
     def create_instance(response: dict = None):
         if response is not None:
@@ -45,6 +47,7 @@ class TokenIssuanceStartResponse(
 
     def to_json(self) -> str:
         return json.dumps(self.to_dict())
+
 
 # The main data class related to the request.
 class TokenIssuanceStartData(_IEventData):
@@ -80,6 +83,7 @@ class TokenIssuanceStartData(_IEventData):
                 customExtensionId=payload.get("customExtensionId"),
             )
 
+
 # The main request class, this will relate it's response and payload.
 class TokenIssuanceStartRequest(
     _IEventRequest[
@@ -104,6 +108,7 @@ class TokenIssuanceStartRequest(
         # A dictionary of token claims.
         self.tokenClaims = tokenClaims
     # static method to create instance of the object from dict
+
     @staticmethod
     def create_instance(result: dict):
         return TokenIssuanceStartRequest(

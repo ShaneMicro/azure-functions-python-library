@@ -42,11 +42,11 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
                             except Exception:
                                 raise ValueError('authentication event trigger input must be a string or a 'f'valid json serializable ({data.value})')  # noqa: E501
                         else:
-                            raise ValueError('Version not supported, supported versions are {10-01-2021-preview}')
+                            raise ValueError('Version not supported, supported versions are {10-01-2021-preview}')  # noqa: E501
                     else:
-                        raise ValueError('Event type not supported, supported event types are {onTokenIssuanceStartCustomExtension}')
+                        raise ValueError('Event type not supported, supported event types are {onTokenIssuanceStartCustomExtension}')  # noqa: E501
                 else:
-                    raise ValueError('The incoming request does not contain any data or payload')
+                    raise ValueError('The incoming request does not contain any data or payload')  # noqa: E501
 
             except json.JSONDecodeError:
                 response = data.value
@@ -60,7 +60,7 @@ class AuthenticationEventTriggerConverter(meta.InConverter,
     def encode(cls, obj: typing.Any, *,
                expected_type: typing.Optional[type]) -> meta.Datum:
         # only serialize if incoming object is of response type.
-        if not isinstance(obj, _abc._IAuthenticationEventResponse):
+        if not isinstance(obj, _abc._IEventResponse):
             raise ValueError('Object should be of valid response type')
         # only serialize if incoming object is serializable
         if not isinstance(obj, _abc._Serializable):
