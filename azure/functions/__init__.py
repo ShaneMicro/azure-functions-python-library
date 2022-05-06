@@ -57,6 +57,8 @@ __all__ = (
     'EntityContext',
     'QueueMessage',
     'ServiceBusMessage',
+    'SqlRow',
+    'SqlRowList',
     'TimerRequest',
 
     # Middlewares
@@ -79,4 +81,4 @@ __all__ = (
     'HttpMethod'
 )
 
-__version__ = '1.10.1'
+__version__ = '1.11.0'
