@@ -3,7 +3,7 @@ from enum import Enum
 import json
 import typing
 
-from typing import List
+from typing import List, Dict
 
 
 class RequestStatus(Enum):
@@ -72,11 +72,13 @@ class _IEventRequest(
         response: response_type,
         payload: payload_type,
         statusMessage: str = None,
+        queryParameters:  Dict[str, str] = None,
     ):
         self.statusMessage = statusMessage
         self.requestStatus = requestStatus
         self.response = response
         self.payload = payload
+        self.queryParameter = queryParameters
 
     @staticmethod
     @abc.abstractmethod
