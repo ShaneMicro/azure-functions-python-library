@@ -3,7 +3,7 @@ from enum import Enum
 import json
 import typing
 
-from typing import List
+from typing import List, Dict
 
 
 # The status of the request.
@@ -91,6 +91,7 @@ class _IEventRequest(
         response: response_type,
         payload: payload_type,
         statusMessage: str = None,
+        queryParameters:  Dict[str, str] = None,
     ):
         # A user friendly message (containing errors), that the authentication event returns.  # noqa: E501
         self.statusMessage = statusMessage
@@ -100,6 +101,7 @@ class _IEventRequest(
         self.response = response
         # Related IEventData
         self.payload = payload
+        self.queryParameter = queryParameters
 
     @staticmethod
     @abc.abstractmethod

@@ -16,6 +16,8 @@ class TestauthenticationEvents(unittest.TestCase):
                 result=json_data
             )
         )
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('code'),"rKjH4GcRhezoBbQWI3z3nt7svQbMGLi6HeEmJbxwVL7BixnL34VDTg==")
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('functionName'),"OnTokenIssuanceStart")
 
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.apiSchemaVersion,

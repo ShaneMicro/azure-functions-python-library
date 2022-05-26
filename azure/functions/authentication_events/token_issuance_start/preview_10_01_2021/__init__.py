@@ -97,6 +97,7 @@ class TokenIssuanceStartRequest(
         payload: TokenIssuanceStartData,
         statusMessage: str = None,
         tokenClaims: Dict[str, str] = None,
+        queryParameters:  Dict[str, str] = None
     ):
 
         super().__init__(
@@ -104,6 +105,7 @@ class TokenIssuanceStartRequest(
             requestStatus=requestStatus,
             response=response,
             payload=payload,
+            queryParameters=queryParameters
         )
         # A dictionary of token claims.
         self.tokenClaims = tokenClaims
@@ -116,5 +118,6 @@ class TokenIssuanceStartRequest(
             requestStatus=RequestStatus(result.get("requestStatus")),
             response=TokenIssuanceStartResponse.create_instance(response=result.get("response")),  # noqa: E501
             payload=TokenIssuanceStartData.create_instance(payload=result.get("payload")),  # noqa: E501
-            tokenClaims=result.get("tokenClaims")
+            tokenClaims=result.get("tokenClaims"),
+            queryParameters=result.get("queryParameters")
         )
