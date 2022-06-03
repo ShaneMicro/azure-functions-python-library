@@ -1,5 +1,5 @@
 import json
-from token_issuance_start import ITokenIssuanceAction, Claim
+from ..token_issuance_start import ITokenIssuanceAction, Claim
 from typing import List
 
 
