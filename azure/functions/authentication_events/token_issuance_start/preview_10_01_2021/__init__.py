@@ -14,6 +14,8 @@ from ....authentication_events import FailedRequest  # noqa: F401
 from typing import List, Dict
 
 
+# The main response class that is related to the request, this extends IActionable as the response  # noqa: E501
+# contains actions, we only allow actions that inherit the TokenIssuanceStartAction.  # noqa: E501
 class TokenIssuanceStartResponse(
     _IActionableResponse[ITokenIssuanceAction],
     _Serializable
@@ -25,6 +27,7 @@ class TokenIssuanceStartResponse(
         body: str = None
     ):
         super().__init__(schema=schema, body=body, actions=actions)
+    # static method to create instance of the object from dict
 
     @staticmethod
     def create_instance(response: dict = None):
@@ -46,6 +49,7 @@ class TokenIssuanceStartResponse(
         return json.dumps(self.to_dict())
 
 
+# The main data class related to the request.
 class TokenIssuanceStartData(_IEventData):
     def __init__(
         self,
@@ -56,6 +60,7 @@ class TokenIssuanceStartData(_IEventData):
         customExtensionId: str = None,
         context: Context = None
     ):
+        # The main context of the data.
         self.context = context
         super().__init__(
             eventListenerId=eventListenerId,
@@ -65,6 +70,7 @@ class TokenIssuanceStartData(_IEventData):
             customExtensionId=customExtensionId,
         )
 
+    # static method to create instance of the object from dict
     @staticmethod
     def create_instance(payload: dict = None):
         if payload is not None:
@@ -78,6 +84,7 @@ class TokenIssuanceStartData(_IEventData):
             )
 
 
+# The main request class, this will relate it's response and payload.
 class TokenIssuanceStartRequest(
     _IEventRequest[
         TokenIssuanceStartResponse,
@@ -90,6 +97,7 @@ class TokenIssuanceStartRequest(
         payload: TokenIssuanceStartData,
         statusMessage: str = None,
         tokenClaims: Dict[str, str] = None,
+        queryParameters:  Dict[str, str] = None
     ):
 
         super().__init__(
@@ -97,8 +105,11 @@ class TokenIssuanceStartRequest(
             requestStatus=requestStatus,
             response=response,
             payload=payload,
+            queryParameters=queryParameters
         )
+        # A dictionary of token claims.
         self.tokenClaims = tokenClaims
+    # static method to create instance of the object from dict
 
     @staticmethod
     def create_instance(result: dict):
@@ -107,5 +118,6 @@ class TokenIssuanceStartRequest(
             requestStatus=RequestStatus(result.get("requestStatus")),
             response=TokenIssuanceStartResponse.create_instance(response=result.get("response")),  # noqa: E501
             payload=TokenIssuanceStartData.create_instance(payload=result.get("payload")),  # noqa: E501
-            tokenClaims=result.get("tokenClaims")
+            tokenClaims=result.get("tokenClaims"),
+            queryParameters=result.get("queryParameters")
         )

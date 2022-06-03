@@ -7,7 +7,7 @@ import azure.functions.authentication_events as _abc
 from .resource import AuthenticationEventsResources
 
 
-class TestDurableFunctions(unittest.TestCase):
+class TestauthenticationEvents(unittest.TestCase):
     def test_object_creation_payload(self):
 
         json_data = json.loads(AuthenticationEventsResources.request_data)
@@ -16,6 +16,8 @@ class TestDurableFunctions(unittest.TestCase):
                 result=json_data
             )
         )
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('code'),"rKjH4GcRhezoBbQWI3z3nt7svQbMGLi6HeEmJbxwVL7BixnL34VDTg==")
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('functionName'),"OnTokenIssuanceStart")
 
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.apiSchemaVersion,
