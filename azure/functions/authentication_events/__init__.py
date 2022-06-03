@@ -2,7 +2,6 @@ import abc
 from enum import Enum
 import json
 import typing
-
 from typing import List, Dict
 
 
@@ -39,14 +38,9 @@ action_type = typing.TypeVar("action_type", bound=_IEventAction)
 
 
 # Class that binds a response that has actions
-class _IActionableResponse(
-    _IEventResponse, typing.Generic[action_type]
-):
+class _IActionableResponse(_IEventResponse, typing.Generic[action_type]):
     def __init__(
-        self,
-        actions: List[action_type],
-        schema: str = None,
-        body: str = None
+        self, actions: List[action_type], schema: str = None, body: str = None
     ):
         super().__init__(schema, body)
         # Collections of actions pertaining to the event.
@@ -58,40 +52,27 @@ class _IEventData(abc.ABC):
     def __init__(
         self,
         eventListenerId: str = None,
-        time: str = None,
-        apiSchemaVersion: str = None,
-        eventType: str = None,
         customExtensionId: str = None,
     ):
-        # The event type (e.g. OnTokenIssuanceStart).
-        self.type = eventType
-        # The version of the event being targeted.
-        self.apiSchemaVersion = apiSchemaVersion
-        # Date and time of the event.
-        self.time = time
         # Unique Id for the event.
         self.eventListenerId = eventListenerId
         # The unique internal Id of the registered custom extension.
         self.customExtensionId = customExtensionId
 
 
-response_type = typing.TypeVar(
-    "response_type", bound=_IEventResponse
-)  # noqa: E501
+response_type = typing.TypeVar("response_type", bound=_IEventResponse)  # noqa: E501
 payload_type = typing.TypeVar("payload_type", bound=_IEventData)
 
 
 # Abstract base event class to house common event request attributes.
-class _IEventRequest(
-    abc.ABC, typing.Generic[response_type, payload_type]
-):
+class _IEventRequest(abc.ABC, typing.Generic[response_type, payload_type]):
     def __init__(
         self,
         requestStatus: RequestStatus,
         response: response_type,
         payload: payload_type,
         statusMessage: str = None,
-        queryParameters:  Dict[str, str] = None,
+        queryParameters: Dict[str, str] = None,
     ):
         # A user friendly message (containing errors), that the authentication event returns.  # noqa: E501
         self.statusMessage = statusMessage
@@ -101,12 +82,38 @@ class _IEventRequest(
         self.response = response
         # Related IEventData
         self.payload = payload
+        # Related Query Parameters
         self.queryParameter = queryParameters
 
     @staticmethod
     @abc.abstractmethod
     def create_instance(result: dict):
         pass
+
+
+class _ICloudEventRequest(
+    _IEventRequest,
+        typing.Generic[response_type, payload_type]):
+    def __init__(
+        self,
+        requestStatus: RequestStatus,
+        response: response_type,
+        payload: payload_type,
+        statusMessage: str = None,
+        queryParameters: Dict[str, str] = None,
+        type: str = None,
+        source: str = None,
+        time: str = None,
+        oDataType: str = None,
+    ):
+        self.type = type
+        self.source = source
+        self.time = time
+        self.oDataType = oDataType
+
+        super().__init__(
+            requestStatus, response, payload, statusMessage, queryParameters
+        )
 
 
 # base class extended to ensure objects are serializable.
@@ -122,16 +129,21 @@ class _Serializable(abc.ABC):
         pass
 
 
+# Constructs a FailedRequest .
 class FailedRequest(_IActionableResponse, _Serializable):
+    # Class method for creating a failed request .
     def __init__(self, error: str):
         self.error = error
 
+    # Create a JSON - serializable representation of the failed request.
     @staticmethod
     def handle(error: Exception):
         return FailedRequest(str(error))
 
+    # Converts to object to a dictionary
     def to_dict(self) -> dict:
         return {"error": self.error}
 
+    # Returns a string representation of the failed request.
     def to_json(self) -> str:
         return json.dumps(self.to_dict())

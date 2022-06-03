@@ -17,6 +17,7 @@ from .kafka import KafkaEvent, KafkaConverter, KafkaTriggerConverter
 from .meta import get_binding_registry
 from ._queue import QueueMessage
 from ._servicebus import ServiceBusMessage
+from ._sql import SqlRow, SqlRowList
 from .authenticationevents import AuthenticationEventTriggerConverter
 
 # Import binding implementations to register them
