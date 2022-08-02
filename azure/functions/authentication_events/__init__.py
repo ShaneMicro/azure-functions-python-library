@@ -2,10 +2,7 @@ import abc
 from enum import Enum
 import json
 import typing
-<<<<<<< HEAD
 
-=======
->>>>>>> f56564effbf291a27e1bd5751a38484af387bb7f
 from typing import List, Dict
 
 
@@ -76,11 +73,7 @@ class _IEventRequest(abc.ABC, typing.Generic[response_type, payload_type]):
         response: response_type,
         payload: payload_type,
         statusMessage: str = None,
-<<<<<<< HEAD
         queryParameters:  Dict[str, str] = None,
-=======
-        queryParameters: Dict[str, str] = None,
->>>>>>> f56564effbf291a27e1bd5751a38484af387bb7f
     ):
         # A user friendly message (containing errors), that the authentication event returns.  # noqa: E501
         self.statusMessage = statusMessage
@@ -90,10 +83,7 @@ class _IEventRequest(abc.ABC, typing.Generic[response_type, payload_type]):
         self.response = response
         # Related IEventData
         self.payload = payload
-<<<<<<< HEAD
-=======
         # Related Query Parameters
->>>>>>> f56564effbf291a27e1bd5751a38484af387bb7f
         self.queryParameter = queryParameters
 
     @staticmethod
