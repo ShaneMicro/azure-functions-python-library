@@ -15,29 +15,29 @@ class TestAuthenticationEvents(unittest.TestCase):
         onTokenIssuanceStartRequest = events.deserialize(
             AuthenticationEventsResources.request_data
         )
-        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('code'),"rKjH4GcRhezoBbQWI3z3nt7svQbMGLi6HeEmJbxwVL7BixnL34VDTg==")
-        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('functionName'),"OnTokenIssuanceStart")
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('code'),"mNEwqtM0t7ZzNDn4IoJGy51dNlZb-7Pu0hJPFzzBi703AzFus9_flQ==")
+        self.assertEqual(onTokenIssuanceStartRequest.queryParameter.get('functionName'),"onTokenIssuanceString")
 
         self.assertEqual(
             onTokenIssuanceStartRequest.queryParameter.get("code"),
-            "rKjH4GcRhezoBbQWI3z3nt7svQbMGLi6HeEmJbxwVL7BixnL34VDTg==",
+            "mNEwqtM0t7ZzNDn4IoJGy51dNlZb-7Pu0hJPFzzBi703AzFus9_flQ==",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.queryParameter.get("functionName"),
-            "OnTokenIssuanceStart",
+            "onTokenIssuanceString",
         )
 
         self.assertEqual(
-            onTokenIssuanceStartRequest.payload.customExtensionId,
-            "10000000-0000-0000-0000-000000000001",
+            onTokenIssuanceStartRequest.payload.customAuthenticationExtensionId,
+            "10000000-0000-0000-0000-000000000002",
         )
         self.assertEqual(
-            onTokenIssuanceStartRequest.payload.eventListenerId,
+            onTokenIssuanceStartRequest.payload.authenticationEventListenerId,
             "10000000-0000-0000-0000-000000000001",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.type,
-            "onTokenIssuanceStartCustomExtension",
+            "microsoft.graph.authenticationEvent.TokenIssuanceStart",
         )
 
     def test_object_creation_payload_context(self):
@@ -56,37 +56,20 @@ class TestAuthenticationEvents(unittest.TestCase):
             "127.0.0.1",
         )
         self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .authProtocol.tenantId,
-            "30000000-0000-0000-0000-000000000003",
-        )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .authProtocol.type,
-            "OAUTH2.0",
-        )
-        self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.clientServicePrincipal.id,  # noqa: E501
             "40000000-0000-0000-0000-000000000001",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.clientServicePrincipal.appDisplayName,  # noqa: E501
-            "Test client app",
+            "Testclientapp",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.clientServicePrincipal.displayName,  # noqa: E501
-            "Test client application",
+            "Testclientapplication",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.clientServicePrincipal.appId,  # noqa: E501
             "40000000-0000-0000-0000-000000000002",
-        )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext.clientServicePrincipal.servicePrincipalNames,  # noqa: E501
-            [
-                "40000000-0000-0000-0000-000000000002",
-                "http://example.com/client/app1",
-            ],  # noqa: E501
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.resourceServicePrincipal.id,  # noqa: E501
@@ -98,19 +81,13 @@ class TestAuthenticationEvents(unittest.TestCase):
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.resourceServicePrincipal.appDisplayName,  # noqa: E501
-            "Test resourceapp",
+            "Testresourceapp",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.resourceServicePrincipal.displayName,  # noqa: E501
-            "Test resourceapplication",
+            "Testresourceapplication",
         )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext.resourceServicePrincipal.servicePrincipalNames,  # noqa: E501
-            [
-                "40000000-0000-0000-0000-000000000004",
-                "https://example.com/resource2",
-            ],  # noqa: E501
-        )
+        
 
     def test_object_creation_payload_context_user(self):
 
@@ -124,11 +101,7 @@ class TestAuthenticationEvents(unittest.TestCase):
             onTokenIssuanceStartRequest.payload.authenticationContext.user.id,
             "60000000-0000-0000-0000-000000000006",
         )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .user.ageGroup,
-            "Adult",
-        )
+        
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext
             .user.country,
@@ -137,27 +110,13 @@ class TestAuthenticationEvents(unittest.TestCase):
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext
             .user.companyName,
-            "Evo Sts Test",
+            "NickGomez",
         )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .user.department,
-            "Dummy department",
-        )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .user.creationType,
-            "Invitation",
-        )
-        self.assertEqual(
-            onTokenIssuanceStartRequest.payload.authenticationContext
-            .user.department,
-            "Dummy department",
-        )
+    
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext
             .user.displayName,
-            "Dummy display name",
+            "Dummydisplayname",
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext
@@ -179,7 +138,7 @@ class TestAuthenticationEvents(unittest.TestCase):
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.user.onPremiseUserPrincipalName,  # noqa: E501
-            "Dummy Name",
+            None,
         )
         self.assertEqual(
             onTokenIssuanceStartRequest.payload.authenticationContext.user.preferredDataLocation,  # noqa: E501
@@ -226,7 +185,7 @@ class TestAuthenticationEvents(unittest.TestCase):
             AuthenticationEventsResources.response_data
         )  # noqa: E501
         # set actions in the json dict to empty list
-        expected_result_dict["actions"] = []
+        expected_result_dict["data"]["actions"] = []
         # get json string from the json dict
         expected_result_str = json.dumps(expected_result_dict)
         # validate json string from the to_json function to expected json string  # noqa: E501
@@ -280,8 +239,8 @@ class TestAuthenticationEvents(unittest.TestCase):
             )  # noqa: E501
 
     def test_encode_object_typ(self):
-        response = _abc._IEventResponse(
-            schema="test", body='{"test":"Not serializable"}'
+        response = _abc._AuthEventResponse(
+            ODataType="test", body='{"test":"Not serializable"}'
         )
         with self.assertRaisesRegex(
             Exception, "Object was not of expected type Serializable"

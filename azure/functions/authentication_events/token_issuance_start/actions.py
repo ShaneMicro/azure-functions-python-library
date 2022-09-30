@@ -1,10 +1,10 @@
 import json
-from ..token_issuance_start import ITokenIssuanceAction, Claim
+from ..token_issuance_start import TokenIssuanceAction, Claim
 from typing import List
 
 
 # Class for the Provide Claims for token action.
-class ProvideClaimsForToken(ITokenIssuanceAction):
+class ProvideClaimsForToken(TokenIssuanceAction):
     def __init__(self, claims: List[Claim]):
         # The 'Name' of the action in the JSON.
         self.actionType = "ProvideClaimsForToken"

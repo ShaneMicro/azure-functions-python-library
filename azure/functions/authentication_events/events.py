@@ -1,7 +1,7 @@
 # A list of supported events and there type keys
 import json
 
-from azure.functions.authentication_events import _IEventResponse, _Serializable # NOQA E501
+from azure.functions.authentication_events import _AuthEventResponse, _Serializable # NOQA E501
 from .token_issuance_start import TokenIssuanceStartRequest
 
 
@@ -35,7 +35,7 @@ def deserialize(value):
 
 def serialize(obj):
     # only serialize if incoming object is of response type.
-    if not isinstance(obj, _IEventResponse):
+    if not isinstance(obj, _AuthEventResponse):
         raise ValueError("Object should be of valid response type")
     # only serialize if incoming object is serializable
     if not isinstance(obj, _Serializable):

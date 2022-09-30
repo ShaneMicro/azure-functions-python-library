@@ -1,27 +1,29 @@
 from typing import List
 
 
-# Protocol class for data
-class AuthProtocol:
-    def __init__(self, type: str, tenantId: str):
-        # The type
-        self.type = type
-        # The tenant identifier.
-        self.tenantId = tenantId
+# # Protocol class for data
+# class AuthProtocol:
+#     def __init__(self, type: str, tenantId: str):
+#         # The type
+#         self.type = type
+#         # The tenant identifier.
+#         self.tenantId = tenantId
 
-    # static method to create instance of the object from dict
+#     # static method to create instance of the object from dict
 
-    @staticmethod
-    def populate(authProtocol: dict = None):
-        if authProtocol is not None:
-            return AuthProtocol(**authProtocol)
+#     @staticmethod
+#     def populate(authProtocol: dict = None):
+#         if authProtocol is not None:
+#             return AuthProtocol(**authProtocol)
 
 
 # Client class for data.
 class Client:
-    def __init__(self, ip: str):
+    def __init__(self, ip: str, locale: str, market: str):
         # The Ip Address
         self.ip = ip
+        self.locale = locale
+        self.market = market
 
     # static method to create instance of the object from dict
 
@@ -48,7 +50,6 @@ class ServicePrincipal:
         appId: str,
         appDisplayName: str,
         displayName: str,
-        servicePrincipalNames: List[str],
     ):
         # The identifier for the service principal.
         self.id = id
@@ -58,8 +59,7 @@ class ServicePrincipal:
         self.appDisplayName = appDisplayName
         # The display name.
         self.displayName = displayName
-        # A list of service principal name.
-        self.servicePrincipalNames = servicePrincipalNames
+        
 
     # static method to create instance of the object from dict
 
@@ -73,15 +73,10 @@ class ServicePrincipal:
 class User:
     def __init__(
         self,
-        ageGroup: str,
         companyName: str,
         country: str,
-        createdDateTime: str,
-        creationType: str,
-        department: str,
         displayName: str,
         givenName: str,
-        lastPasswordChangeDateTime: str,
         mail: str,
         onPremisesSamAccountName: str,
         onPremisesSecurityIdentifier: str,
@@ -99,15 +94,10 @@ class User:
         self.userPrincipalName = userPrincipalName
         self.surname = surname
         self.preferredLanguage = preferredLanguage
-        self.ageGroup = ageGroup
         self.companyName = companyName
         self.country = country
-        self.createdDateTime = createdDateTime
-        self.creationType = creationType
-        self.department = department
         self.displayName = displayName
         self.givenName = givenName
-        self.lastPasswordChangeDateTime = lastPasswordChangeDateTime
         self.mail = mail
         self.onPremisesSamAccountName = onPremisesSamAccountName
         self.onPremisesSecurityIdentifier = onPremisesSecurityIdentifier
@@ -122,11 +112,11 @@ class User:
 
 
 # Context class for data.
-class Context:
+class AuthenticationContext:
     def __init__(
         self,
         client: Client,
-        authProtocol: AuthProtocol,
+        authProtocol: str,
         clientServicePrincipal: ServicePrincipal,
         resourceServicePrincipal: ServicePrincipal,
         user: User,
@@ -150,7 +140,7 @@ class Context:
     @staticmethod
     def populate(context: dict = None):
         if context is not None:
-            return Context(
+            return AuthenticationContext(
                 correlationId=context.get("correlationId"),
                 user=User.populate(context.get("user")),
                 client=Client.populate(context.get("client")),
@@ -160,5 +150,5 @@ class Context:
                 resourceServicePrincipal=ServicePrincipal.populate(
                     context.get("resourceServicePrincipal")
                 ),
-                authProtocol=AuthProtocol.populate(context.get("authProtocol"))
+                authProtocol=context.get("authProtocol")
             )
