@@ -1,5 +1,6 @@
 # A list of supported events and there type keys
 import json
+from multiprocessing.managers import ValueProxy
 
 from azure.functions.authentication_events import _AuthEventResponse, _Serializable # NOQA E501
 from .token_issuance_start import TokenIssuanceStartRequest
@@ -16,9 +17,12 @@ def deserialize(value):
         raise ValueError("The incoming request does not contain any data")
 
     incoming = json.loads(value)
-
+    #TODO: check status
+    
+    if incoming.get("requestStatus") == "Failed":
+        raise ValueError(incoming.get("statusMessage"))
     for key in __events:
-        if incoming.get("type") == key:
+        if incoming.get("type").lower() == key.lower():
             try:
                 return __events[key].create_instance(result=incoming)
             except Exception:
@@ -31,6 +35,7 @@ def deserialize(value):
         "Event type '%s' not supported, supported event types are '%s'"
         % (incoming.get("type"), "', '".join(key for key in __events))
     )
+    
 
 
 def serialize(obj):

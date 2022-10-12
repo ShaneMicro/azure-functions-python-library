@@ -8,7 +8,7 @@ from . import meta
 class AuthenticationEventTriggerConverter(
     meta.InConverter,
     meta.OutConverter,
-    binding="authenticationEventTrigger",
+    binding="authenticationEventsTrigger",
     trigger=True,
 ):
     @classmethod
